@@ -31,6 +31,7 @@ public class Ground {
 		{
 			for (double iWidth = -width; iWidth < width; iWidth++)
 			{
+				gl.glNormal3d(0, 1, 0);
 				gl.glVertex3d(iWidth, 0, iHeight);
 				gl.glVertex3d(iWidth, 0, iHeight + 1);
 				gl.glVertex3d(iWidth + 1, 0, iHeight + 1);

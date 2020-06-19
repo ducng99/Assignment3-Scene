@@ -44,7 +44,7 @@ public class Main implements GLEventListener, KeyListener {
 
 		frame.add(canvas);
 		frame.setSize(1280, 960);
-		final FPSAnimator animator = new FPSAnimator(canvas, 60);
+		final FPSAnimator animator = new FPSAnimator(canvas, 144);
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -82,27 +82,24 @@ public class Main implements GLEventListener, KeyListener {
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		// Enable VSync
-		gl.setSwapInterval(1);
+		gl.setSwapInterval(0);
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glEnable(GL2.GL_COLOR_MATERIAL);
-		gl.glClearColor(0.95f, 0.95f, 0.95f, 1.f);
+		gl.glClearColor(0.05f, 0.05f, 0.05f, 1.f);
 		
-		float ambientLight[] = { 0.2f, 0.2f, 0.2f, 1 }; // no ambient
-		float diffuseLight[] = { 1, 1, 1, 1 }; // white light for diffuse
-		float specularLight[] = { 1, 1, 1, 1 }; // white light for specular
-		
-        float position[] = {30.0f, 20.0f, 10.0f, 1.0f };
+		float ambientLight[] = { 0f, 0f, 0f, 1 }; // no ambient
+		float diffuseLight[] = { 1, 1, 1, 0.2f }; // white light for diffuse
+		float specularLight[] = { 1, 1, 1, 0.2f }; // white light for specular
 		
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularLight, 0);
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
         
-        float globalAmbientLight[] = { 0.4f, 0.4f, 0.4f, 1 };
+        float globalAmbientLight[] = { 0f, 0f, 0f, 1 };
 
 		// set the global ambient light level
 		gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globalAmbientLight, 0);
@@ -147,6 +144,10 @@ public class Main implements GLEventListener, KeyListener {
     	}
 
 		camera.draw(gl);
+
+        float position[] = {30.0f, 50.0f, 10.0f, 1.0f };
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+		
 		ground.draw(gl);
 		origin.draw(gl);
 		helicopter.draw(gl);
