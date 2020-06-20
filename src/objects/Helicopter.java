@@ -22,6 +22,7 @@ public class Helicopter {
 	public double direction;
 	
 	public boolean isLeft = false, isRight = false, isForward = false, isBackward = false, isUp = false, isDown = false, isLookLeft = false, isLookRight = false;
+	private long prevTick = System.currentTimeMillis();
     
     public Helicopter() {
         Position = new Vector();
@@ -44,28 +45,35 @@ public class Helicopter {
     	body.addChild(bottom);
     }
     
-    public void draw(GL2 gl) {
-    	if (isLeft)
-    		strafeLeft();
-    	if (isRight)
-    		strafeRight();
-    	if (isForward)
-    		goForward();
-    	if (isBackward)
-    		goBackward();
-    	if (isUp)
-    		goUp();
-    	if (isDown)
-    		goDown();
-    	if (isLookLeft)
-    		lookLeft();
-    	if (isLookRight)
-    		lookRight();
-    	
+    public void draw(GL2 gl)
+    {	
         gl.glTranslated(Position.x, Position.y, Position.z);
         
         // -direction because I love clockwise rotation
         gl.glRotated(-direction, 0, 1, 0);
+        
+        // Update every 16.67sec (60fps)
+    	if (System.currentTimeMillis() - prevTick > 1000 / 60.0)
+    	{
+    		if (isLeft)
+        		strafeLeft();
+        	if (isRight)
+        		strafeRight();
+        	if (isForward)
+        		goForward();
+        	if (isBackward)
+        		goBackward();
+        	if (isUp)
+        		goUp();
+        	if (isDown)
+        		goDown();
+        	if (isLookLeft)
+        		lookLeft();
+        	if (isLookRight)
+        		lookRight();
+        	
+        	prevTick = System.currentTimeMillis();
+    	}
 
         body.draw(gl);
     }

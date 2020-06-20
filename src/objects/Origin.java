@@ -15,6 +15,8 @@ public class Origin {
 
 	public void draw(GL2 gl)
 	{
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glLineWidth(3.0f);
 		gl.glColor3d(1, 1, 1);
 		glu.gluSphere(quadric, 0.1, 10, 15);
 		
@@ -34,5 +36,7 @@ public class Origin {
 		gl.glVertex3d(0, 0, 0);
 		gl.glVertex3d(0, 0, 1);
 		gl.glEnd();
+		
+		gl.glLineWidth(1.0f);
 	}
 }

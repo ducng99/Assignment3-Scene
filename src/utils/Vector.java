@@ -46,6 +46,79 @@ public class Vector {
 		this.z = 0;
 	}
 	
+	public Vector(Vector a)
+	{
+		this.x = a.x;
+		this.y = a.y;
+		this.z = a.z;
+	}
+	
+	public Vector(float[] array)
+	{		
+		if (array.length > 0)
+		{
+			this.x = array[0];
+			
+			if (array.length > 1)
+			{
+				this.y = array[1];
+				
+				if (array.length > 2)
+				{
+					this.z = array[2];
+				}
+				else
+				{
+					this.z = 0;
+				}
+			}
+			else
+			{
+				this.y = 0;
+				this.z = 0;
+			}
+		}
+		else
+		{
+			this.x = 0;
+			this.y = 0;
+			this.z = 0;
+		}
+	}
+	
+	public Vector(double[] array)
+	{
+		if (array.length > 0)
+		{
+			this.x = array[0];
+			
+			if (array.length > 1)
+			{
+				this.y = array[1];
+				
+				if (array.length > 2)
+				{
+					this.z = array[2];
+				}
+				else
+				{
+					this.z = 0;
+				}
+			}
+			else
+			{
+				this.y = 0;
+				this.z = 0;
+			}
+		}
+		else
+		{
+			this.x = 0;
+			this.y = 0;
+			this.z = 0;
+		}
+	}
+	
 	public Vector(double x, double y)
 	{
 		this.x = x;

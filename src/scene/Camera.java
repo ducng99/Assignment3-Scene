@@ -26,7 +26,7 @@ public class Camera {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
-		glu.gluPerspective(FOV, (float) windowWidth / (float) windowHeight, 0.1, 100);
+		glu.gluPerspective(FOV, (float) windowWidth / (float) windowHeight, 0.1, 150);
 		// set up the camera position and orientation
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();

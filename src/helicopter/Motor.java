@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
+import scene.Material;
 import utils.Normal;
 import utils.Vector;
 
@@ -39,6 +40,8 @@ public class Motor extends HeliPart {
 		// Blades
 		engine.spinBlades(gl);
 		
+		Material.chrome(gl);
+		
 		gl.glBegin(GL2.GL_QUADS);
 		
 		Vector normal;
@@ -51,8 +54,8 @@ public class Motor extends HeliPart {
 		points.add(new Vector(-bladeLength, 0, -bladeLength / 35.0));
 		points.add(new Vector(bladeLength, 0, -bladeLength / 35.0));
 		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
+		normal = Normal.CalcPolygon(points);
+		gl.glNormal3d(normal.x, -normal.y, normal.z);
 		
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
@@ -66,7 +69,7 @@ public class Motor extends HeliPart {
 		points.add(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
 		points.add(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
 		
-		normal = Normal.Calc(points);
+		normal = Normal.CalcPolygon(points);
 		gl.glNormal3d(normal.x, normal.y, normal.z);
 		
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
@@ -81,7 +84,7 @@ public class Motor extends HeliPart {
 		points.add(new Vector(-bladeLength, bladeLength / 70.0, bladeLength / 35.0));
 		points.add(new Vector(bladeLength, bladeLength / 70.0, bladeLength / 35.0));
 		
-		normal = Normal.Calc(points);
+		normal = Normal.CalcPolygon(points);
 		gl.glNormal3d(normal.x, normal.y, normal.z);
 
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
@@ -96,8 +99,8 @@ public class Motor extends HeliPart {
 		points.add(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
 		points.add(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
 		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
+		normal = Normal.CalcPolygon(points);
+		gl.glNormal3d(normal.x, normal.y, -normal.z);
 		
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
@@ -111,8 +114,8 @@ public class Motor extends HeliPart {
 		points.add(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
 		points.add(new Vector(bladeLength, 0, -bladeLength / 35.0));
 		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
+		normal = Normal.CalcPolygon(points);
+		gl.glNormal3d(-normal.x, normal.y, normal.z);
 		
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
@@ -126,7 +129,7 @@ public class Motor extends HeliPart {
 		points.add(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
 		points.add(new Vector(-bladeLength, 0, -bladeLength / 35.0));
 		
-		normal = Normal.Calc(points);
+		normal = Normal.CalcPolygon(points);
 		gl.glNormal3d(normal.x, normal.y, normal.z);
 
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
@@ -143,8 +146,8 @@ public class Motor extends HeliPart {
 			points.add(new Vector(-bladeLength / 35.0, 0, -bladeLength));
 			points.add(new Vector(bladeLength / 35.0, 0, -bladeLength));
 			
-			normal = Normal.Calc(points);
-			gl.glNormal3d(normal.x, normal.y, normal.z);
+			normal = Normal.CalcPolygon(points);
+			gl.glNormal3d(normal.x, -normal.y, normal.z);
 
 			gl.glVertex3dv(points.get(0).ToArray(), 0);
 			gl.glVertex3dv(points.get(1).ToArray(), 0);
@@ -158,7 +161,7 @@ public class Motor extends HeliPart {
 			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
 			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
 			
-			normal = Normal.Calc(points);
+			normal = Normal.CalcPolygon(points);
 			gl.glNormal3d(normal.x, normal.y, normal.z);
 
 			gl.glVertex3dv(points.get(0).ToArray(), 0);
@@ -173,8 +176,8 @@ public class Motor extends HeliPart {
 			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
 			points.add(new Vector(bladeLength / 35.0, 0, -bladeLength));
 			
-			normal = Normal.Calc(points);
-			gl.glNormal3d(normal.x, normal.y, normal.z);
+			normal = Normal.CalcPolygon(points);
+			gl.glNormal3d(-normal.x, normal.y, normal.z);
 
 			gl.glVertex3dv(points.get(0).ToArray(), 0);
 			gl.glVertex3dv(points.get(1).ToArray(), 0);
@@ -188,7 +191,7 @@ public class Motor extends HeliPart {
 			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
 			points.add(new Vector(-bladeLength / 35.0, 0, -bladeLength));
 			
-			normal = Normal.Calc(points);
+			normal = Normal.CalcPolygon(points);
 			gl.glNormal3d(normal.x, normal.y, normal.z);
 
 			gl.glVertex3dv(points.get(0).ToArray(), 0);
@@ -203,7 +206,7 @@ public class Motor extends HeliPart {
 			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, bladeLength));
 			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, bladeLength));
 			
-			normal = Normal.Calc(points);
+			normal = Normal.CalcPolygon(points);
 			gl.glNormal3d(normal.x, normal.y, normal.z);
 
 			gl.glVertex3dv(points.get(0).ToArray(), 0);
@@ -218,8 +221,8 @@ public class Motor extends HeliPart {
 			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
 			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
 			
-			normal = Normal.Calc(points);
-			gl.glNormal3d(normal.x, normal.y, normal.z);
+			normal = Normal.CalcPolygon(points);
+			gl.glNormal3d(normal.x, normal.y, -normal.z);
 
 			gl.glVertex3dv(points.get(0).ToArray(), 0);
 			gl.glVertex3dv(points.get(1).ToArray(), 0);

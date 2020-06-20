@@ -1,5 +1,7 @@
 package App;
 import scene.Camera;
+import scene.Lighting;
+import scene.TextureControl;
 import utils.Vector;
 
 import java.awt.Frame;
@@ -13,7 +15,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.Animator;
 
 import objects.*;
 
@@ -29,11 +31,24 @@ public class Main implements GLEventListener, KeyListener {
 	// Key released events queue
 	private final LinkedBlockingQueue<KeyEvent> keyReleasedEventsQ = new LinkedBlockingQueue<>();
 	
+	private final static double WIDTH = 100;
+	private final static double HEIGHT = 100;
+	
 	public static Camera camera;
-	private Ground ground;
+	public static Lighting lighting;
+	private FlatBase flatBase;
+	private Terrain terrain;
 	private Origin origin;
+	private Moon moon;
 	private Helicopter helicopter;
 	private boolean lockCamera = true;
+	
+	public static int displayList;
+	
+	// Manage display list easier
+	public static enum Displays {
+		Moon, FlatBase, Terrain
+	}
 
 	public static void main(String[] args) {
 		Frame frame = new Frame("Assignment 3 - Scene");
@@ -44,7 +59,7 @@ public class Main implements GLEventListener, KeyListener {
 
 		frame.add(canvas);
 		frame.setSize(1280, 960);
-		final FPSAnimator animator = new FPSAnimator(canvas, 144);
+		final Animator animator = new Animator(canvas);
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -74,44 +89,51 @@ public class Main implements GLEventListener, KeyListener {
 				+ "LEFT/RIGHT ARROWS: Turn left or right\n"
 				+ "W/S: Move forward or backward\n"
 				+ "A/D: Strafe left or right\n"
-				+ "L: Change ground draw mode\n"
+				+ "L: Change flatBase draw mode\n"
 				+ "K: Toggle camera follow helicopter\n");
 	}
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
+		
+		TextureControl.gl = gl;
+		TextureControl.importTextures();
+		
 		// Enable VSync
-		gl.setSwapInterval(0);
+		gl.setSwapInterval(1);
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
-		gl.glEnable(GL2.GL_COLOR_MATERIAL);
 		gl.glClearColor(0.05f, 0.05f, 0.05f, 1.f);
 		
-		float ambientLight[] = { 0f, 0f, 0f, 1 }; // no ambient
-		float diffuseLight[] = { 1, 1, 1, 0.2f }; // white light for diffuse
-		float specularLight[] = { 1, 1, 1, 0.2f }; // white light for specular
+		float ambientLight[] = { 0.2f, 0.2f, 0.2f, 1f }; // no ambient
+		float diffuseLight[] = { 0.6f, 0.6f, 0.6f, 1f }; // white light for diffuse
+		float specularLight[] = { 0.2f, 0.2f, 0.2f, 1f }; // white light for specular
 		
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularLight, 0);
         
-        float globalAmbientLight[] = { 0f, 0f, 0f, 1 };
+        float globalAmbientLight[] = { 0.4f, 0.4f, 0.4f, 1 };
 
 		// set the global ambient light level
 		gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globalAmbientLight, 0);
         
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
-        gl.glEnable(GL2.GL_NORMALIZE);
+        
+        displayList = gl.glGenLists(Displays.values().length);
 
 		camera = new Camera();
+		terrain = new Terrain(gl, WIDTH, HEIGHT);
+		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
+		moon = new Moon(gl);
+		moon.setPosition(new Vector(lighting.getLightPos()));
 		helicopter = new Helicopter();
-		ground = new Ground();
 	}
 
 	@Override
@@ -145,11 +167,12 @@ public class Main implements GLEventListener, KeyListener {
 
 		camera.draw(gl);
 
-        float position[] = {30.0f, 50.0f, 10.0f, 1.0f };
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.getLightPos(), 0);
 		
-		ground.draw(gl);
+		flatBase.draw();
+		terrain.draw();
 		origin.draw(gl);
+		moon.draw(gl);
 		helicopter.draw(gl);
 
 		// Flush all drawing operations to the graphics card
@@ -179,8 +202,10 @@ public class Main implements GLEventListener, KeyListener {
 			switch(event.getKeyCode())
 			{
 				case KeyEvent.VK_L:
-					// Change ground draw mode
-					ground.toggleDrawMode();
+					// Change flatBase draw mode
+					flatBase.toggleDrawMode();
+					// Change terrain draw mode
+					terrain.toggleDrawMode();
 					break;
 				case KeyEvent.VK_W:
 					helicopter.isForward = true;

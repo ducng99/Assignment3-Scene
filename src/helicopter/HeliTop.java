@@ -2,6 +2,8 @@ package helicopter;
 
 import com.jogamp.opengl.GL2;
 
+import scene.Material;
+
 /**
  * This class contains draw function for the top blades of the helicopter
  * @author Duc Nguyen
@@ -21,8 +23,9 @@ public class HeliTop extends HeliPart {
 	public void drawNode(GL2 gl)
 	{
 		gl.glPushMatrix();
-
-		gl.glColor3d(0.1, 0.1, 0.1);
+		Material.chrome(gl);
+		
+		//gl.glColor3d(0.1, 0.1, 0.1);
 		gl.glRotated(-90, 1, 0, 0);
 		
 		// Blades holder thingy

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
+import scene.Material;
 import scene.TreeNode;
 import utils.Normal;
 import utils.Vector;
@@ -28,10 +29,10 @@ public class HeliBody extends TreeNode {
 	public void drawNode(GL2 gl) {
 		gl.glPushMatrix();
 		
-		Vector normal;
+		ArrayList<Vector> normals;
 		ArrayList<Vector> points = new ArrayList<>();
 		
-		gl.glColor3d(0.2, 0.5, 0);
+		Material.metal(gl);
 
 		gl.glBegin(GL2.GL_QUADS);
 		
@@ -41,46 +42,33 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(side, height, -back));
 		points.add(new Vector(side, height, back));
 		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-		
+		normals = Normal.CalcPerVertex(points);
+		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-
-		// Front
-		gl.glColor4d(1, 1, 1, 1);
-
-		points.add(new Vector(side, height, -back));
-		points.add(new Vector(-side, height, -back));
-		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
-		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-		
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 
 		// Head
-		gl.glColor4d(0.2, 0.5, 0, 1);
+		Material.metal(gl);
 		
 		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
 		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
 		points.add(new Vector(side / 2.0, 0, front));
 		points.add(new Vector(-side / 2.0, 0, front));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-		
+
+		normals = Normal.CalcPerVertex(points);
+		gl.glNormal3d(normals.get(0).x, -normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, -normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, -normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, -normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 
@@ -89,13 +77,16 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
 		points.add(new Vector(-side / 2.0, 0, front));
 		points.add(new Vector(-side, 0, -back));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(-normal.x, normal.y, normal.z);	// Revert x-axis because it's the right side (0 to -infinity)
-		
+
+		normals = Normal.CalcPerVertex(points);
+
+		gl.glNormal3d(-normals.get(0).x, normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(-normals.get(1).x, normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(-normals.get(2).x, normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(-normals.get(3).x, normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
@@ -104,13 +95,16 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(-side, height, -back));
 		points.add(new Vector(-side, 0, -back));
 		points.add(new Vector(-side, 0, back));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(-normal.x, normal.y, normal.z);	// Revert x-axis because it's the right side (0 to -infinity)
-		
+
+		normals = Normal.CalcPerVertex(points);
+
+		gl.glNormal3d(-normals.get(0).x, normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(-normals.get(1).x, normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(-normals.get(2).x, normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(-normals.get(3).x, normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
@@ -119,13 +113,16 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(side, height, back));
 		points.add(new Vector(side, 0, back));
 		points.add(new Vector(-side, 0, back));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, -normal.z);
-		
+
+		normals = Normal.CalcPerVertex(points);
+
+		gl.glNormal3d(normals.get(0).x, normals.get(0).y, -normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, normals.get(1).y, -normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, normals.get(2).y, -normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, normals.get(3).y, -normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
@@ -134,13 +131,16 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
 		points.add(new Vector(side / 2.0, 0, front));
 		points.add(new Vector(side, 0, -back));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-		
+
+		normals = Normal.CalcPerVertex(points);
+
+		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
@@ -149,13 +149,16 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(side, height, -back));
 		points.add(new Vector(side, 0, -back));
 		points.add(new Vector(side, 0, back));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-		
+
+		normals = Normal.CalcPerVertex(points);
+
+		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
@@ -170,16 +173,45 @@ public class HeliBody extends TreeNode {
 		points.add(new Vector(side / 2.0, 0, front));
 		points.add(new Vector(side, 0, -back));
 		points.add(new Vector(side, 0, back));
-		
-		normal = Normal.Calc(points);
-		gl.glNormal3d(normal.x, -normal.y, normal.z);	// revert y-axis because this is the bottom of the plane
-		
+
+		normals = Normal.CalcPerVertex(points);
+		// revert y-axis because this is the bottom of the plane
+
+		gl.glNormal3d(normals.get(0).x, -normals.get(0).y, normals.get(0).z);
 		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, -normals.get(1).y, normals.get(1).z);
 		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, -normals.get(2).y, normals.get(2).z);
 		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, -normals.get(3).y, normals.get(3).z);
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
+		gl.glNormal3d(normals.get(4).x, -normals.get(4).y, normals.get(4).z);
 		gl.glVertex3dv(points.get(4).ToArray(), 0);
+		gl.glNormal3d(normals.get(5).x, -normals.get(5).y, normals.get(5).z);
 		gl.glVertex3dv(points.get(5).ToArray(), 0);
+		points.clear();
+		
+		gl.glEnd();
+
+		// Front
+		Material.glass(gl);
+		
+		gl.glBegin(GL2.GL_QUADS);
+
+		points.add(new Vector(side, height, -back));
+		points.add(new Vector(-side, height, -back));
+		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
+		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
+
+		normals = Normal.CalcPerVertex(points);
+		gl.glNormal3d(normals.get(0).x, normals.get(0).y, -normals.get(0).z);
+		gl.glVertex3dv(points.get(0).ToArray(), 0);
+		gl.glNormal3d(normals.get(1).x, normals.get(1).y, -normals.get(1).z);
+		gl.glVertex3dv(points.get(1).ToArray(), 0);
+		gl.glNormal3d(normals.get(2).x, normals.get(2).y, -normals.get(2).z);
+		gl.glVertex3dv(points.get(2).ToArray(), 0);
+		gl.glNormal3d(normals.get(3).x, normals.get(3).y, -normals.get(3).z);
+		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
 		gl.glEnd();
