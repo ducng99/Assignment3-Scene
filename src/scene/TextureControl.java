@@ -21,6 +21,7 @@ public class TextureControl {
 			textureMap.put("Water", TextureIO.newTexture(new File("./img/water.jpg"), true));	// looks like mesh blue wallpaper but it's free
 			textureMap.put("Moon", TextureIO.newTexture(new File("./img/moon.jpg"), true));
 			textureMap.put("FlatBase", TextureIO.newTexture(new File("./img/ground.jpg"), true));
+			textureMap.put("Sky", TextureIO.newTexture(new File("./img/sky.jpg"), true));
 			
 			textureMap.forEach((name, tex) -> {
 				if (gl != null) tex.disable(gl);

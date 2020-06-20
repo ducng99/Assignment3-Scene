@@ -21,8 +21,38 @@ public class HeliBody extends TreeNode {
 	public double bottom = 0;
 	public double side = 2.0;
 	public double front = 5.0;
+	
+	private ArrayList<Vector> verticies = new ArrayList<>();
+	private ArrayList<short[]> faces = new ArrayList<>();
 
 	public HeliBody() {
+		verticies.add(new Vector(-side, height, back));							//0
+		verticies.add(new Vector(-side, height, -back));						//1
+		verticies.add(new Vector(side, height, -back));							//2
+		verticies.add(new Vector(side, height, back));							//3
+		verticies.add(new Vector(side, 0, back));								//4
+		verticies.add(new Vector(-side, 0, back));								//5
+		verticies.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));		//6
+		verticies.add(new Vector(-side / 2.0, 0, front));						//7
+		verticies.add(new Vector(-side, 0, -back));								//8
+		verticies.add(new Vector(side / 2.0, height / 2.5, front / 1.11));		//9
+		verticies.add(new Vector(side / 2.0, 0, front));						//10
+		verticies.add(new Vector(side, 0, -back));								//11
+		
+		// Top
+		faces.add(new short[] {0, 1, 2, 3});
+		// Head
+		faces.add(new short[] {6, 9, 10, 7});
+		// Right-front side
+		faces.add(new short[] {1, 6, 7, 8});
+		// Right-back side
+		faces.add(new short[] {0, 1, 8, 5});
+		// Back side
+		faces.add(new short[] {0, 3, 4, 5});
+		// Left-front side
+		faces.add(new short[] {2, 9, 10, 11});
+		// Left-back side
+		faces.add(new short[] {3, 2, 11, 4});
 	}
 	
 	@Override
@@ -36,11 +66,11 @@ public class HeliBody extends TreeNode {
 
 		gl.glBegin(GL2.GL_QUADS);
 		
-		// Top
-		points.add(new Vector(-side, height, back));
+		//// Top
+		/*points.add(new Vector(-side, height, back));
 		points.add(new Vector(-side, height, -back));
 		points.add(new Vector(side, height, -back));
-		points.add(new Vector(side, height, back));
+		points.add(new Vector(side, height, back));*/
 		
 		normals = Normal.CalcPerVertex(points);
 		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
@@ -53,7 +83,7 @@ public class HeliBody extends TreeNode {
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 
-		// Head
+		//// Head
 		Material.metal(gl);
 		
 		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
@@ -72,11 +102,11 @@ public class HeliBody extends TreeNode {
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 
-		// Right-front side
-		points.add(new Vector(-side, height, -back));
+		//// Right-front side
+		/*points.add(new Vector(-side, height, -back));
 		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
 		points.add(new Vector(-side / 2.0, 0, front));
-		points.add(new Vector(-side, 0, -back));
+		points.add(new Vector(-side, 0, -back));*/
 
 		normals = Normal.CalcPerVertex(points);
 
@@ -90,11 +120,11 @@ public class HeliBody extends TreeNode {
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
-		// Right-back side
-		points.add(new Vector(-side, height, back));
+		//// Right-back side
+		/*points.add(new Vector(-side, height, back));
 		points.add(new Vector(-side, height, -back));
 		points.add(new Vector(-side, 0, -back));
-		points.add(new Vector(-side, 0, back));
+		points.add(new Vector(-side, 0, back));*/
 
 		normals = Normal.CalcPerVertex(points);
 
@@ -108,11 +138,11 @@ public class HeliBody extends TreeNode {
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
-		// Back side
-		points.add(new Vector(-side, height, back));
+		//// Back side
+		/*points.add(new Vector(-side, height, back));
 		points.add(new Vector(side, height, back));
 		points.add(new Vector(side, 0, back));
-		points.add(new Vector(-side, 0, back));
+		points.add(new Vector(-side, 0, back));*/
 
 		normals = Normal.CalcPerVertex(points);
 
@@ -126,11 +156,11 @@ public class HeliBody extends TreeNode {
 		gl.glVertex3dv(points.get(3).ToArray(), 0);
 		points.clear();
 		
-		// Left-front side
-		points.add(new Vector(side, height, -back));
+		//// Left-front side
+		/*points.add(new Vector(side, height, -back));
 		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
 		points.add(new Vector(side / 2.0, 0, front));
-		points.add(new Vector(side, 0, -back));
+		points.add(new Vector(side, 0, -back));*/
 
 		normals = Normal.CalcPerVertex(points);
 

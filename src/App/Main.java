@@ -31,15 +31,16 @@ public class Main implements GLEventListener, KeyListener {
 	// Key released events queue
 	private final LinkedBlockingQueue<KeyEvent> keyReleasedEventsQ = new LinkedBlockingQueue<>();
 	
-	private final static double WIDTH = 100;
-	private final static double HEIGHT = 100;
+	private final static double WIDTH = 200;
+	private final static double HEIGHT = 200;
 	
 	public static Camera camera;
-	public static Lighting lighting;
+	public static Lighting skyLighting;
+	private SkyBox sky;
 	private FlatBase flatBase;
 	private Terrain terrain;
 	private Origin origin;
-	private Moon moon;
+	//private Moon moon;
 	private Helicopter helicopter;
 	private boolean lockCamera = true;
 	
@@ -47,7 +48,7 @@ public class Main implements GLEventListener, KeyListener {
 	
 	// Manage display list easier
 	public static enum Displays {
-		Moon, FlatBase, Terrain
+		Moon, FlatBase, Terrain, Sky
 	}
 
 	public static void main(String[] args) {
@@ -108,31 +109,20 @@ public class Main implements GLEventListener, KeyListener {
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glClearColor(0.05f, 0.05f, 0.05f, 1.f);
-		
-		float ambientLight[] = { 0.2f, 0.2f, 0.2f, 1f }; // no ambient
-		float diffuseLight[] = { 0.6f, 0.6f, 0.6f, 1f }; // white light for diffuse
-		float specularLight[] = { 0.2f, 0.2f, 0.2f, 1f }; // white light for specular
-		
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularLight, 0);
-        
-        float globalAmbientLight[] = { 0.4f, 0.4f, 0.4f, 1 };
-
-		// set the global ambient light level
-		gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globalAmbientLight, 0);
-        
-        gl.glEnable(GL2.GL_LIGHTING);
-        gl.glEnable(GL2.GL_LIGHT0);
         
         displayList = gl.glGenLists(Displays.values().length);
 
+		skyLighting = new Lighting(gl, Lighting.LightType.Directional);
+		skyLighting.setPosition(new Vector(0.8, 1, 1));	// Based on the texture
+        skyLighting.setupLighting();
+
 		camera = new Camera();
+		sky = new SkyBox(gl);
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
-		moon = new Moon(gl);
-		moon.setPosition(new Vector(lighting.getLightPos()));
+		//moon = new Moon(gl);
+		//moon.setPosition(new Vector(skyLighting.getLightPos()));
 		helicopter = new Helicopter();
 	}
 
@@ -167,12 +157,13 @@ public class Main implements GLEventListener, KeyListener {
 
 		camera.draw(gl);
 
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lighting.getLightPos(), 0);
-		
-		flatBase.draw();
+		skyLighting.draw();
+
+		sky.draw();
 		terrain.draw();
+		flatBase.draw();
 		origin.draw(gl);
-		moon.draw(gl);
+		//moon.draw(gl);
 		helicopter.draw(gl);
 
 		// Flush all drawing operations to the graphics card

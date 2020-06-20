@@ -31,6 +31,8 @@ public class Moon extends TreeNode {
 		glu = new GLU();
 		quadric = glu.gluNewQuadric();
 		glu.gluQuadricDrawStyle(quadric, GLU.GLU_FILL);
+		glu.gluQuadricTexture(quadric, true);
+		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
 		
 		init();
 	}
@@ -58,8 +60,6 @@ public class Moon extends TreeNode {
 		Material.moon(gl);
 		TextureControl.setupTexture(gl, "Moon");
 
-		glu.gluQuadricTexture(quadric, true);
-		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
 		glu.gluSphere(quadric, size, 30, 15);
 		
 		TextureControl.disableTexture(gl, "Moon");

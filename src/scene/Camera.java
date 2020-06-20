@@ -14,8 +14,9 @@ import utils.Vector;
 public class Camera {
 
 	private static final double FOV = 68;
+	private double viewDistance = 300;
 	
-	private Vector Position = new Vector(10, 5, 7);
+	private Vector Position = new Vector();
 	private Vector lookAtPos = new Vector();
 
 	double windowWidth = 4;
@@ -26,7 +27,7 @@ public class Camera {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
-		glu.gluPerspective(FOV, (float) windowWidth / (float) windowHeight, 0.1, 150);
+		glu.gluPerspective(FOV, (float) windowWidth / (float) windowHeight, 0.1, viewDistance);
 		// set up the camera position and orientation
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
@@ -43,6 +44,10 @@ public class Camera {
 		this.lookAtPos = lookAtPos;
 	}
 	
+	public Vector getPosition() {
+		return Position;
+	}
+
 	/**
 	 * Set eye position
 	 * @param eyePos
@@ -50,6 +55,10 @@ public class Camera {
 	public void setEyePos(Vector eyePos)
 	{
 		Position = eyePos;
+	}
+
+	public double getViewDistance() {
+		return viewDistance;
 	}
 
 	/**
