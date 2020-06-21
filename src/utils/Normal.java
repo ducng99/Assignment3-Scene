@@ -1,6 +1,8 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import scene.Vertex;
 
@@ -58,15 +60,20 @@ public class Normal {
 
 	public static void CalcPerVertex(ArrayList<Vertex> vertices, ArrayList<int[]> faces)
 	{
-		for (int i = 0; i < vertices.size(); i++)
+		// Running in parallel reduces loading time by around 2.2s (more than half)
+		vertices.parallelStream().forEach((vertex) ->
 		{
-			ArrayList<Vector> normals = new ArrayList<>();
+			int i = vertices.indexOf(vertex);
+			List<Vector> normals = Collections.synchronizedList(new ArrayList<>());
 			
-			for (int[] face : faces)
+			// Back up i value because parallel stream says so
+			int tmpI = i;
+			
+			faces.parallelStream().forEach((face) ->
 			{
 				for (int vIndex = 0; vIndex < face.length; vIndex++)
 				{
-					if (face[vIndex] == i)
+					if (face[vIndex] == tmpI)
 					{
 						ArrayList<Vector> points = new ArrayList<>();
 						
@@ -89,10 +96,10 @@ public class Normal {
 						}
 					}
 				}
-			}
+			});
 			
 			vertices.get(i).setNormal(Average(normals));
-		}
+		});
 	}
 	
 	public static Vector Normalize(Vector normal)
@@ -102,7 +109,7 @@ public class Normal {
 		return new Vector(normal.x / mag, normal.y / mag, normal.z / mag);
 	}
 	
-	public static Vector Average(ArrayList<Vector> vectors)
+	public static Vector Average(List<Vector> vectors)
 	{
 		int total = vectors.size();
 		

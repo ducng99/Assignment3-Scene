@@ -74,12 +74,12 @@ public class HeliBody extends TreeNode {
 		Material.metal(gl);
 		
 		// -1 to remove drawing front. We need it to be drawn as glass
-		for (int[] face : faces)
+		for (int i = 0; i < faces.size() - 1; i++)
 		{
-			int type = face.length == 4 ? GL2.GL_QUADS : GL2.GL_POLYGON;
+			int type = faces.get(i).length == 4 ? GL2.GL_QUADS : GL2.GL_POLYGON;
 			gl.glBegin(type);
 			
-			for (int vertexNo : face)
+			for (int vertexNo : faces.get(i))
 			{
 				Vertex v = vertices.get(vertexNo);
 				Vector vN = v.getNormal();

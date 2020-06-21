@@ -4,12 +4,16 @@ import scene.Lighting;
 import scene.TextureControl;
 import utils.Vector;
 
-import java.awt.Frame;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -48,15 +52,27 @@ public class Main implements GLEventListener, KeyListener {
 	
 	// Manage display list easier
 	public static enum Displays {
-		Moon, FlatBase, Terrain, Sky, HeliBody
+		FlatBase, Terrain, Sky, HeliBody
 	}
+	
+	private JLabel loadingLabel = new JLabel("Loading...");
+	private static JFrame frame;
+	
+	private static long tmpTime;
 
 	public static void main(String[] args) {
-		Frame frame = new Frame("Assignment 3 - Scene");
+		frame = new JFrame("Assignment 3 - Scene");
 		GLCanvas canvas = new GLCanvas();
 		Main app = new Main();
 		canvas.addGLEventListener(app);
 		canvas.addKeyListener(app);
+		
+		app.loadingLabel.setFont(new Font("Courier New", Font.BOLD, 24));
+		app.loadingLabel.setSize(200, 30);
+		app.loadingLabel.setBackground(Color.white);
+		app.loadingLabel.setOpaque(true);
+		app.loadingLabel.setLocation(540, 400);
+		frame.add(app.loadingLabel);
 
 		frame.add(canvas);
 		frame.setSize(1280, 960);
@@ -81,6 +97,9 @@ public class Main implements GLEventListener, KeyListener {
 		// Center frame
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		tmpTime = System.currentTimeMillis();
+		
 		animator.start();
         canvas.requestFocus();
 		
@@ -122,6 +141,9 @@ public class Main implements GLEventListener, KeyListener {
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
 		helicopter = new Helicopter(gl);
+		
+		System.out.println("Load time: " + (System.currentTimeMillis() - tmpTime) + "ms");
+		frame.remove(loadingLabel);
 	}
 
 	@Override

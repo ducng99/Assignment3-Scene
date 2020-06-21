@@ -61,7 +61,8 @@ public class Rotor extends HeliPart {
 		
 		// 1st blade - bottom
 		faces.add(new int[] {0, 1, 2, 3});
-		faces.add(new int[] {});
+		// 1st blade - top
+		faces.add(new int[] {4, 5, 6, 7});
 		faces.add(new int[] {});
 		faces.add(new int[] {});
 		faces.add(new int[] {});
