@@ -25,7 +25,6 @@ public class HeliTop extends HeliPart {
 		gl.glPushMatrix();
 		Material.matte(gl);
 		
-		//gl.glColor3d(0.1, 0.1, 0.1);
 		gl.glRotated(-90, 1, 0, 0);
 		
 		// Blades holder thingy

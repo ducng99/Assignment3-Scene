@@ -31,9 +31,8 @@ public class Helicopter {
         Position = new Vector();
         direction = 0.0;
         
-        body = new HeliBody();
+        body = new HeliBody(gl);
         body.setPosition(new Vector(0, .42, 0));
-        body.init(gl);
         
     	top = new HeliTop();
     	top.setPosition(new Vector(0, body.height));
@@ -41,7 +40,7 @@ public class Helicopter {
     	tail = new HeliTail();
     	tail.setPosition(new Vector(0, body.height, body.back));
     	
-    	bottom = new HeliBottom();
+    	bottom = new HeliBottom(gl);
     	bottom.setPosition(new Vector(0, body.bottom));
 
     	body.addChild(top);

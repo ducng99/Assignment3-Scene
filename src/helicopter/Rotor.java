@@ -31,6 +31,8 @@ public class Rotor extends HeliPart {
 		
 		if (length > 0)
 			bladeLength = length;
+		
+		init();
 	}
 	
 	public Rotor(int numBlades, double length, double rotateAngle, Vector rotateAxis)
@@ -50,6 +52,7 @@ public class Rotor extends HeliPart {
 		vertices.add(new Vertex(new Vector(-bladeLength, bladeLength / 70.0, bladeLength / 35.0)));		//5
 		vertices.add(new Vertex(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0)));	//6
 		vertices.add(new Vertex(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0)));		//7
+		
 		vertices.add(new Vertex(new Vector(bladeLength / 35.0, 0, bladeLength)));						//8
 		vertices.add(new Vertex(new Vector(-bladeLength / 35.0, 0, bladeLength)));						//9
 		vertices.add(new Vertex(new Vector(-bladeLength / 35.0, 0, -bladeLength)));						//10
@@ -62,18 +65,30 @@ public class Rotor extends HeliPart {
 		// 1st blade - bottom
 		faces.add(new int[] {0, 1, 2, 3});
 		// 1st blade - top
-		faces.add(new int[] {4, 5, 6, 7});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
+		faces.add(new int[] {4, 7, 6, 5});
+		// 1st blade - long side 1
+		faces.add(new int[] {0, 4, 5, 1});
+		// 1st blade - long side 2
+		faces.add(new int[] {3, 2, 6, 7});
+		// 1st blade - short side 1
+		faces.add(new int[] {0, 3, 7, 4});
+		// 1st blade - short side 2
+		faces.add(new int[] {1, 5, 6, 2});
+
+		// 2nd blade - bottom
+		faces.add(new int[] {8, 9, 10, 11});
+		// 2nd blade - top
+		faces.add(new int[] {12, 15, 14, 13});
+		// 2nd blade - long side 1
+		faces.add(new int[] {8, 11, 15, 12});
+		// 2nd blade - long side 2
+		faces.add(new int[] {9, 13, 14, 10});
+		// 2nd blade - short side 1
+		faces.add(new int[] {8, 12, 13, 9});
+		// 2nd blade - short side 2
+		faces.add(new int[] {11, 10, 14, 15});
 		
-		faces.add(new int[] {});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
-		faces.add(new int[] {});
+		Normal.CalcPerVertex(vertices, faces);
 	}
 
 	@Override
@@ -89,191 +104,17 @@ public class Rotor extends HeliPart {
 		
 		gl.glBegin(GL2.GL_QUADS);
 		
-		Vector normal;
-		ArrayList<Vector> points = new ArrayList<>();
-		
-		// 1st blade - bottom
-		
-		points.add(new Vector(bladeLength, 0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, 0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, 0, -bladeLength / 35.0));
-		points.add(new Vector(bladeLength, 0, -bladeLength / 35.0));
-		
-		normal = Normal.CalcPolygon(points);
-		gl.glNormal3d(normal.x, -normal.y, normal.z);
-		
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		// 1st blade - top
-		points.add(new Vector(bladeLength, bladeLength / 70.0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, bladeLength / 70.0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
-		points.add(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
-		
-		normal = Normal.CalcPolygon(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-		
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		// 1st blade - long side 1
-		points.add(new Vector(bladeLength, 0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, 0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, bladeLength / 70.0, bladeLength / 35.0));
-		points.add(new Vector(bladeLength, bladeLength / 70.0, bladeLength / 35.0));
-		
-		normal = Normal.CalcPolygon(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		// 1st blade - long side 2
-		points.add(new Vector(bladeLength, 0, -bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, 0, -bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
-		points.add(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
-		
-		normal = Normal.CalcPolygon(points);
-		gl.glNormal3d(normal.x, normal.y, -normal.z);
-		
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		// 1st blade - short side 1
-		points.add(new Vector(bladeLength, 0, bladeLength / 35.0));
-		points.add(new Vector(bladeLength, bladeLength / 70.0, bladeLength / 35.0));
-		points.add(new Vector(bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
-		points.add(new Vector(bladeLength, 0, -bladeLength / 35.0));
-		
-		normal = Normal.CalcPolygon(points);
-		gl.glNormal3d(-normal.x, normal.y, normal.z);
-		
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		// 1st blade - short side 2
-		points.add(new Vector(-bladeLength, 0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, bladeLength / 70.0, bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, bladeLength / 70.0, -bladeLength / 35.0));
-		points.add(new Vector(-bladeLength, 0, -bladeLength / 35.0));
-		
-		normal = Normal.CalcPolygon(points);
-		gl.glNormal3d(normal.x, normal.y, normal.z);
-
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		if (numBlades == 2)
-		{
-			// 2nd blade - bottom
-			points.add(new Vector(bladeLength / 35.0, 0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, 0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, 0, -bladeLength));
-			points.add(new Vector(bladeLength / 35.0, 0, -bladeLength));
-			
-			normal = Normal.CalcPolygon(points);
-			gl.glNormal3d(normal.x, -normal.y, normal.z);
-
-			gl.glVertex3dv(points.get(0).ToArray(), 0);
-			gl.glVertex3dv(points.get(1).ToArray(), 0);
-			gl.glVertex3dv(points.get(2).ToArray(), 0);
-			gl.glVertex3dv(points.get(3).ToArray(), 0);
-			points.clear();
-
-			// 2nd blade - top
-			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
-			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
-			
-			normal = Normal.CalcPolygon(points);
-			gl.glNormal3d(normal.x, normal.y, normal.z);
-
-			gl.glVertex3dv(points.get(0).ToArray(), 0);
-			gl.glVertex3dv(points.get(1).ToArray(), 0);
-			gl.glVertex3dv(points.get(2).ToArray(), 0);
-			gl.glVertex3dv(points.get(3).ToArray(), 0);
-			points.clear();
-			
-			// 2nd blade - long side 1
-			points.add(new Vector(bladeLength / 35.0, 0, bladeLength));
-			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, bladeLength));
-			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
-			points.add(new Vector(bladeLength / 35.0, 0, -bladeLength));
-			
-			normal = Normal.CalcPolygon(points);
-			gl.glNormal3d(-normal.x, normal.y, normal.z);
-
-			gl.glVertex3dv(points.get(0).ToArray(), 0);
-			gl.glVertex3dv(points.get(1).ToArray(), 0);
-			gl.glVertex3dv(points.get(2).ToArray(), 0);
-			gl.glVertex3dv(points.get(3).ToArray(), 0);
-			points.clear();
-			
-			// 2nd blade - long side 2
-			points.add(new Vector(-bladeLength / 35.0, 0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, 0, -bladeLength));
-			
-			normal = Normal.CalcPolygon(points);
-			gl.glNormal3d(normal.x, normal.y, normal.z);
-
-			gl.glVertex3dv(points.get(0).ToArray(), 0);
-			gl.glVertex3dv(points.get(1).ToArray(), 0);
-			gl.glVertex3dv(points.get(2).ToArray(), 0);
-			gl.glVertex3dv(points.get(3).ToArray(), 0);
-			points.clear();
-			
-			// 2nd blade - short side 1
-			points.add(new Vector(bladeLength / 35.0, 0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, 0, bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, bladeLength));
-			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, bladeLength));
-			
-			normal = Normal.CalcPolygon(points);
-			gl.glNormal3d(normal.x, normal.y, normal.z);
-
-			gl.glVertex3dv(points.get(0).ToArray(), 0);
-			gl.glVertex3dv(points.get(1).ToArray(), 0);
-			gl.glVertex3dv(points.get(2).ToArray(), 0);
-			gl.glVertex3dv(points.get(3).ToArray(), 0);
-			points.clear();
-			
-			// 2nd blade - short side 2
-			points.add(new Vector(bladeLength / 35.0, 0, -bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, 0, -bladeLength));
-			points.add(new Vector(-bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
-			points.add(new Vector(bladeLength / 35.0, bladeLength / 70.0, -bladeLength));
-			
-			normal = Normal.CalcPolygon(points);
-			gl.glNormal3d(normal.x, normal.y, -normal.z);
-
-			gl.glVertex3dv(points.get(0).ToArray(), 0);
-			gl.glVertex3dv(points.get(1).ToArray(), 0);
-			gl.glVertex3dv(points.get(2).ToArray(), 0);
-			gl.glVertex3dv(points.get(3).ToArray(), 0);
-			points.clear();
+		for (int i = 0; i < (numBlades == 2 ? faces.size() : faces.size() / 2); i++)
+		{			
+			for (int vertexNo : faces.get(i))
+			{
+				Vertex v = vertices.get(vertexNo);
+				Vector vN = v.getNormal();
+				Vector vP = v.getPosition();
+				
+				gl.glNormal3d(vN.x, vN.y, vN.z);
+				gl.glVertex3d(vP.x, vP.y, vP.z);
+			}
 		}
 		
 		gl.glEnd();

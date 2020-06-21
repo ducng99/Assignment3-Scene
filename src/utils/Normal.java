@@ -66,14 +66,11 @@ public class Normal {
 			int i = vertices.indexOf(vertex);
 			List<Vector> normals = Collections.synchronizedList(new ArrayList<>());
 			
-			// Back up i value because parallel stream says so
-			int tmpI = i;
-			
 			faces.parallelStream().forEach((face) ->
 			{
 				for (int vIndex = 0; vIndex < face.length; vIndex++)
 				{
-					if (face[vIndex] == tmpI)
+					if (face[vIndex] == i)
 					{
 						ArrayList<Vector> points = new ArrayList<>();
 						

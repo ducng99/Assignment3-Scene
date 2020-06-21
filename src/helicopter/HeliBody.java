@@ -27,7 +27,7 @@ public class HeliBody extends TreeNode {
 	private ArrayList<Vertex> vertices = new ArrayList<>();
 	private ArrayList<int[]> faces = new ArrayList<>();
 
-	public HeliBody() {
+	public HeliBody(GL2 gl) {
 		vertices.add(new Vertex(new Vector(-side, height, back)));							//0
 		vertices.add(new Vertex(new Vector(-side, height, -back)));							//1
 		vertices.add(new Vertex(new Vector(side, height, -back)));							//2
@@ -63,6 +63,8 @@ public class HeliBody extends TreeNode {
 		faces.add(new int[] {2, 1, 6, 9});
 		
 		Normal.CalcPerVertex(vertices, faces);
+		
+		init(gl);
 	}
 	
 	public void init(GL2 gl)

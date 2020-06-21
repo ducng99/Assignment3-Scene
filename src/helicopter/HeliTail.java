@@ -30,7 +30,6 @@ public class HeliTail extends HeliPart {
 		gl.glTranslated(0, -.5, 0);
 		
 		// Tail
-		//gl.glColor3d(0.2, 0.5, 0);
 		gl.glRotated(180, 0, 1, 0);
 		glu.gluCylinder(quadric, .5, .2, 7, 20, 15);
 		
@@ -39,8 +38,7 @@ public class HeliTail extends HeliPart {
 		gl.glPushMatrix();
 		Material.matte(gl);
 		
-		// Blade holder thing		
-		//gl.glColor3d(0.1, 0.1, 0.1);
+		// Blade holder thing
 		gl.glTranslated(0.2, -.5, -6);
 		gl.glRotated(90, 0, 1, 0);
 		glu.gluCylinder(quadric, .15, .1, 0.3, 10, 15);

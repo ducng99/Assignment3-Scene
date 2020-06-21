@@ -52,7 +52,8 @@ public class Main implements GLEventListener, KeyListener {
 	
 	// Manage display list easier
 	public static enum Displays {
-		FlatBase, Terrain, Sky, HeliBody
+		FlatBase, Terrain, Sky,
+		HeliBody, HeliBottom
 	}
 	
 	private JLabel loadingLabel = new JLabel("Loading...");

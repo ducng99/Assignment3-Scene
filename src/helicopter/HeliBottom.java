@@ -2,6 +2,7 @@ package helicopter;
 
 import com.jogamp.opengl.GL2;
 
+import App.Main;
 import scene.Material;
 
 /**
@@ -9,10 +10,16 @@ import scene.Material;
  * @author Duc Nguyen
  *
  */
-public class HeliBottom extends HeliPart {
-	@Override
-	public void drawNode(GL2 gl)
+public class HeliBottom extends HeliPart {	
+	public HeliBottom(GL2 gl)
 	{
+		init(gl);
+	}
+	
+	public void init(GL2 gl)
+	{
+		gl.glNewList(Main.displayList + Main.Displays.HeliBottom.ordinal(), GL2.GL_COMPILE);
+		
 		gl.glPushMatrix();
 		
 		Material.matte(gl);
@@ -60,5 +67,13 @@ public class HeliBottom extends HeliPart {
 		glu.gluCylinder(quadric, .12, .12, 7, 10, 5);
 		
 		gl.glPopMatrix();
+		
+		gl.glEndList();
+	}
+	
+	@Override
+	public void drawNode(GL2 gl)
+	{
+		gl.glCallList(Main.displayList + Main.Displays.HeliBottom.ordinal());
 	}
 }
