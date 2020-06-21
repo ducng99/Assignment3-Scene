@@ -32,7 +32,6 @@ public class Helicopter {
         direction = 0.0;
         
         body = new HeliBody(gl);
-        body.setPosition(new Vector(0, .42, 0));
         
     	top = new HeliTop();
     	top.setPosition(new Vector(0, body.height));
@@ -41,8 +40,10 @@ public class Helicopter {
     	tail.setPosition(new Vector(0, body.height, body.back));
     	
     	bottom = new HeliBottom(gl);
-    	bottom.setPosition(new Vector(0, body.bottom));
-
+    	bottom.setPosition(new Vector());
+    	
+    	// Leave space for bottom
+        body.setPosition(new Vector(0, bottom.height + bottom.thickness * 1.2, 0));
     	body.addChild(top);
     	body.addChild(tail);
     	body.addChild(bottom);
@@ -50,6 +51,7 @@ public class Helicopter {
     
     public void draw()
     {
+    	gl.glPushMatrix();
         gl.glTranslated(Position.x, Position.y, Position.z);
         
         // -direction because I love clockwise rotation
@@ -79,6 +81,7 @@ public class Helicopter {
     	}
 
         body.draw(gl);
+        gl.glPopMatrix();
     }
 
     /**

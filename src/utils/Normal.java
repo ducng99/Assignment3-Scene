@@ -6,6 +6,11 @@ import java.util.List;
 
 import scene.Vertex;
 
+/**
+ * This class contains functions for calculating normals for vertices based on calculations for polygons and triangles.
+ * @author Duc Nguyen
+ *
+ */
 public class Normal {
 
 	/**
@@ -58,7 +63,7 @@ public class Normal {
 		return Vector.Zero;
 	}
 
-	public static void CalcPerVertex(ArrayList<Vertex> vertices, ArrayList<int[]> faces)
+	public static void CalcPerVertex(ArrayList<Vertex> vertices, List<int[]> faces)
 	{
 		// Running in parallel reduces loading time by around 2.2s (more than half)
 		vertices.parallelStream().forEach((vertex) ->

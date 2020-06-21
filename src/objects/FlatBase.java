@@ -10,6 +10,11 @@ import scene.TextureControl;
 import utils.Normal;
 import utils.Vector;
 
+/**
+ * Base grid/water layer
+ * @author Duc Nguyen
+ *
+ */
 public class FlatBase {
 	private boolean isFilled = true;
 	
@@ -29,9 +34,7 @@ public class FlatBase {
 	{
 		gl.glNewList(Main.displayList + Main.Displays.FlatBase.ordinal(), GL2.GL_COMPILE);
 		
-		gl.glPushMatrix();
-		
-		gl.glTranslated(0, 0.01, 0);	// Avoid having the same height with terrain, cause flickering
+		gl.glTranslated(0, 0.01, 0);	// Avoid having the same height with terrain, causes flickering
 		
 		if (!isFilled)
 		{
@@ -80,14 +83,16 @@ public class FlatBase {
 		
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		
-		gl.glPopMatrix();
-		
 		gl.glEndList();
 	}
 
 	public void draw()
 	{
+		gl.glPushMatrix();
+		
 		gl.glCallList(Main.displayList + Main.Displays.FlatBase.ordinal());
+		
+		gl.glPopMatrix();
 	}
 	
 	/**

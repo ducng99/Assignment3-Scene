@@ -18,11 +18,10 @@ import utils.Vector;
  */
 public class HeliBody extends TreeNode {
 	private Vector Position;
-	public double height = 2.0;
-	public double back = -2.0;
-	public double bottom = 0;
-	public double side = 2.0;
-	public double front = 5.0;
+	public double height = 2.5;
+	public double back = -2.5;
+	public double side = 1.8;
+	public double front = 6.0;
 	
 	private ArrayList<Vertex> vertices = new ArrayList<>();
 	private ArrayList<int[]> faces = new ArrayList<>();
@@ -71,8 +70,6 @@ public class HeliBody extends TreeNode {
 	{
 		gl.glNewList(Main.displayList + Main.Displays.HeliBody.ordinal(), GL2.GL_COMPILE);
 		
-		gl.glPushMatrix();
-		
 		Material.metal(gl);
 		
 		// -1 to remove drawing front. We need it to be drawn as glass
@@ -112,15 +109,15 @@ public class HeliBody extends TreeNode {
 		}
 		
 		gl.glEnd();
-
-        gl.glPopMatrix();
         
         gl.glEndList();
 	}
 	
 	@Override
 	public void drawNode(GL2 gl) {
+		gl.glPushMatrix();
 		gl.glCallList(Main.displayList + Main.Displays.HeliBody.ordinal());
+        gl.glPopMatrix();
 	}
 
 	@Override

@@ -40,19 +40,19 @@ public class Main implements GLEventListener, KeyListener {
 	
 	public static Camera camera;
 	public static Lighting skyLighting;
-	private SkyBox sky;
+	public static SkyBox sky;
 	private FlatBase flatBase;
-	private Terrain terrain;
+	public static Terrain terrain;
 	private Origin origin;
-	//private Moon moon;
 	private Helicopter helicopter;
+	private Road road;
 	private boolean lockCamera = true;
 	
 	public static int displayList;
 	
 	// Manage display list easier
 	public static enum Displays {
-		FlatBase, Terrain, Sky,
+		FlatBase, Terrain, Sky, Road,
 		HeliBody, HeliBottom
 	}
 	
@@ -99,8 +99,6 @@ public class Main implements GLEventListener, KeyListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-		tmpTime = System.currentTimeMillis();
-		
 		animator.start();
         canvas.requestFocus();
 		
@@ -117,6 +115,8 @@ public class Main implements GLEventListener, KeyListener {
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
+		
+		tmpTime = System.currentTimeMillis();
 		
 		TextureControl.gl = gl;
 		TextureControl.importTextures();
@@ -141,6 +141,7 @@ public class Main implements GLEventListener, KeyListener {
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
+		road = new Road(gl, new Vector(-1, 3, -5), new Vector(-1, 3, 5));
 		helicopter = new Helicopter(gl);
 		
 		System.out.println("Load time: " + (System.currentTimeMillis() - tmpTime) + "ms");
@@ -176,6 +177,7 @@ public class Main implements GLEventListener, KeyListener {
         	camera.setLookAt(helicopter.Position);
     	}
 
+        gl.glPushMatrix();
 		camera.draw(gl);
 
 		skyLighting.draw();
@@ -185,6 +187,9 @@ public class Main implements GLEventListener, KeyListener {
 		flatBase.draw();
 		origin.draw(gl);
 		helicopter.draw();
+		road.draw();
+		
+		gl.glPopMatrix();
 
 		// Flush all drawing operations to the graphics card
 		gl.glFlush();
@@ -198,10 +203,10 @@ public class Main implements GLEventListener, KeyListener {
     {
     	double rad = Math.toRadians(helicopter.direction);
 
-    	double zOffset = -20 * Math.cos(rad);
-    	double xOffset = 20 * Math.sin(rad);
+    	double zOffset = -25 * Math.cos(rad);
+    	double xOffset = 25 * Math.sin(rad);
     	
-    	return helicopter.Position.Offset(xOffset, 8, zOffset);
+    	return helicopter.Position.Offset(xOffset, 10, zOffset);
     }
 	
 	private void handlePressedKeyEvents()

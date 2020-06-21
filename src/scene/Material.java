@@ -19,6 +19,20 @@ public class Material {
 		gl.glMaterialf(GL2.GL_FRONT, GLLightingFunc.GL_SHININESS, shine);
 	}
 	
+	public static void road(GL2 gl)
+	{
+		gl.glEnable(GL2.GL_LIGHTING);
+		
+		float amb[] = { 0.5f, 0.5f, 0.5f, 1f };
+		float diff[] = { 0.6f, 0.6f, 0.6f, 1f };
+		float spec[] = { .8f, .8f, .8f, 1f };
+		float shine = 40.0f;
+		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_AMBIENT, amb, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_DIFFUSE, diff, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_SPECULAR, spec, 0);
+		gl.glMaterialf(GL2.GL_FRONT, GLLightingFunc.GL_SHININESS, shine);
+	}
+	
 	public static void water(GL2 gl)
 	{
 		gl.glEnable(GL2.GL_LIGHTING);

@@ -29,22 +29,18 @@ public class SkyBox {
 	{
 		gl.glNewList(Main.displayList + Main.Displays.Sky.ordinal(), GL2.GL_COMPILE);
 		
-		gl.glPushMatrix();
 		gl.glDisable(GL2.GL_LIGHTING);	// Skybox is just an image, not illuminating
 		
 		gl.glColor3d(1, 1, 1);
 		gl.glRotated(-90, 1, 0, 0);
 		
+		// Please forgive me, it's hard to find a free night sky texture that looks good. I planned to do an actual Box but it's even harder than sphere.
 		TextureControl.setupTexture(gl, "Sky");
 		
 		size = Main.camera.getViewDistance();
 		
 		glu.gluSphere(quadric, size / 2, 10, 15);
 		TextureControl.disableTexture(gl, "Sky");
-		
-		//gl.glRotated(-90, 1, 0, 0);
-		
-		gl.glPopMatrix();
 		
 		gl.glEndList();
 	}
