@@ -12,7 +12,9 @@ import utils.Vector;
  * @author Duc Nguyen
  *
  */
-public class Helicopter {	
+public class Helicopter {
+	private GL2 gl;
+	
 	private final HeliBody body;
 	private final HeliTop top;
 	private final HeliTail tail;
@@ -24,12 +26,14 @@ public class Helicopter {
 	public boolean isLeft = false, isRight = false, isForward = false, isBackward = false, isUp = false, isDown = false, isLookLeft = false, isLookRight = false;
 	private long prevTick = System.currentTimeMillis();
     
-    public Helicopter() {
+    public Helicopter(GL2 gl) {
+    	this.gl = gl;
         Position = new Vector();
         direction = 0.0;
         
         body = new HeliBody();
         body.setPosition(new Vector(0, .42, 0));
+        body.init(gl);
         
     	top = new HeliTop();
     	top.setPosition(new Vector(0, body.height));
@@ -45,8 +49,8 @@ public class Helicopter {
     	body.addChild(bottom);
     }
     
-    public void draw(GL2 gl)
-    {	
+    public void draw()
+    {
         gl.glTranslated(Position.x, Position.y, Position.z);
         
         // -direction because I love clockwise rotation
@@ -83,7 +87,7 @@ public class Helicopter {
      */
     private void strafeLeft()
     {
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
     		double rad = Math.toRadians(direction);
 
@@ -99,7 +103,7 @@ public class Helicopter {
      */
     private void strafeRight()
     {
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
 	    	double rad = Math.toRadians(direction);
 	
@@ -115,7 +119,7 @@ public class Helicopter {
      */
     private void goForward()
     {
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
 	    	double rad = Math.toRadians(direction);
 	
@@ -131,7 +135,7 @@ public class Helicopter {
      */
     private void goBackward()
     {
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
 	    	double rad = Math.toRadians(direction);
 	
@@ -147,17 +151,17 @@ public class Helicopter {
      */
     private void goUp()
     {
-    	if (!top.motor.engine.engineStarted())
+    	if (!top.rotor.engine.engineStarted())
     	{
-    		top.motor.engine.startEngine();
+    		top.rotor.engine.startEngine();
     	}
     	
-    	if (!tail.motor.engine.engineStarted())
+    	if (!tail.rotor.engine.engineStarted())
     	{
-    		tail.motor.engine.startEngine();
+    		tail.rotor.engine.startEngine();
     	}
     	
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
     		Position = Position.Offset(0, 0.1);
     	}
@@ -167,11 +171,11 @@ public class Helicopter {
     {
     	if (Position.y <= 0)
     	{
-    		if (!top.motor.engine.engineStopped())
-    			top.motor.engine.stopEngine();
+    		if (!top.rotor.engine.engineStopped())
+    			top.rotor.engine.stopEngine();
     		
-    		if (!tail.motor.engine.engineStopped())
-    			tail.motor.engine.stopEngine();
+    		if (!tail.rotor.engine.engineStopped())
+    			tail.rotor.engine.stopEngine();
     	}
     	
     	if (Position.y > 0)
@@ -182,7 +186,7 @@ public class Helicopter {
     
     private void lookLeft()
     {
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
 	    	direction--;
 	    	
@@ -193,7 +197,7 @@ public class Helicopter {
     
     private void lookRight()
     {
-    	if (top.motor.engine.engineStarted() && tail.motor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
     	{
 	    	direction++;
 	    	

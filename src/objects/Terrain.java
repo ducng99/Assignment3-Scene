@@ -12,6 +12,7 @@ import com.jogamp.opengl.GL2;
 import App.Main;
 import scene.Material;
 import scene.TextureControl;
+import scene.Vertex;
 import utils.Normal;
 import utils.Vector;
 
@@ -25,6 +26,9 @@ public class Terrain {
     
     private int imgWidth;
     private int imgHeight;
+    
+    private ArrayList<Vertex> vertices = new ArrayList<>();
+    private ArrayList<int[]> faces = new ArrayList<>();
 
     public Terrain(GL2 gl, double width, double height) 
     {
@@ -51,8 +55,39 @@ public class Terrain {
             }
         }
         catch (IOException e) {
+        	System.out.println("Cannot load heightmap image!");
         	throw new RuntimeException(e);
         }
+        
+        // Adding all points to array of vertices
+        for (int y = 0; y < heightMap.length; y++)
+    	{
+    		for (int x = 0; x < heightMap[y].length; x++)
+    		{
+    			vertices.add(new Vertex(new Vector((double)x / imgWidth * (width * 2) - width, heightMap[y][x], (double)y / imgHeight * (height * 2) - height)));
+    		}
+    	}
+        
+        // Adding faces
+        for (int y = 0; y < heightMap.length; y++)
+    	{
+    		for (int x = 0; x < heightMap[y].length; x++)
+    		{
+    			if (x < heightMap[y].length - 1 && y < heightMap.length - 1)
+    			{
+    				int[] face = new int[] { heightMap.length * y + x, heightMap.length * (y + 1) + x, heightMap.length * y + x + 1};
+    				faces.add(face);
+    			}
+    			
+    			if (x > 0 && y > 0)
+    			{
+    				int[] face = new int[] { heightMap.length * y + x, heightMap.length * (y - 1) + x, heightMap.length * y + x - 1 };
+    				faces.add(face);
+    			}
+    		}
+    	}
+        
+        Normal.CalcPerVertex(vertices, faces);
         
         init();
     }
@@ -72,7 +107,26 @@ public class Terrain {
 
     	Material.ground(gl);
     	TextureControl.setupTexture(gl, "FlatBase");
-		ArrayList<Vector> points = new ArrayList<>();
+    	
+    	gl.glBegin(GL2.GL_TRIANGLES);
+    	
+    	for (int[] face : faces)
+    	{
+    		for (int vertexNo : face)
+    		{
+    			Vertex v = vertices.get(vertexNo);
+    			Vector vN = v.getNormal();
+    			Vector vP = v.getPosition();
+    			
+    			gl.glNormal3d(vN.x, vN.y, vN.z);
+    			gl.glTexCoord2d(vP.x + width, height * 2 - vP.z);
+    			gl.glVertex3d(vP.x, vP.y, vP.z);
+    		}
+    	}
+    	
+    	gl.glEnd();
+    	
+		/*ArrayList<Vector> points = new ArrayList<>();
     	
     	gl.glBegin(GL2.GL_TRIANGLES);
     	
@@ -80,7 +134,7 @@ public class Terrain {
     	{
     		for (int x = 0; x < heightMap[y].length; x++)
     		{
-    			if (x < heightMap.length - 1 && y < heightMap[y].length - 1)
+    			if (x < heightMap.length - 1 || y < heightMap[y].length - 1)
     			{
     				points.add(new Vector((double)x / imgWidth * (width * 2) - width, heightMap[y][x], (double)y / imgHeight * (height * 2) - height));
 	    			points.add(new Vector((double)(x + 1) / imgWidth * (width * 2) - width, heightMap[y][x + 1], (double)y / imgHeight * (height * 2) - height));
@@ -112,7 +166,7 @@ public class Terrain {
     		}
     	}
     	
-    	gl.glEnd();
+    	gl.glEnd();*/
     	
     	TextureControl.disableTexture(gl, "FlatBase");
     	

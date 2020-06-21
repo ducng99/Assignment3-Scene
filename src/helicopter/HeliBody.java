@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
+import App.Main;
 import scene.Material;
 import scene.TreeNode;
+import scene.Vertex;
 import utils.Normal;
 import utils.Vector;
 
@@ -22,231 +24,101 @@ public class HeliBody extends TreeNode {
 	public double side = 2.0;
 	public double front = 5.0;
 	
-	private ArrayList<Vector> verticies = new ArrayList<>();
-	private ArrayList<short[]> faces = new ArrayList<>();
+	private ArrayList<Vertex> vertices = new ArrayList<>();
+	private ArrayList<int[]> faces = new ArrayList<>();
 
 	public HeliBody() {
-		verticies.add(new Vector(-side, height, back));							//0
-		verticies.add(new Vector(-side, height, -back));						//1
-		verticies.add(new Vector(side, height, -back));							//2
-		verticies.add(new Vector(side, height, back));							//3
-		verticies.add(new Vector(side, 0, back));								//4
-		verticies.add(new Vector(-side, 0, back));								//5
-		verticies.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));		//6
-		verticies.add(new Vector(-side / 2.0, 0, front));						//7
-		verticies.add(new Vector(-side, 0, -back));								//8
-		verticies.add(new Vector(side / 2.0, height / 2.5, front / 1.11));		//9
-		verticies.add(new Vector(side / 2.0, 0, front));						//10
-		verticies.add(new Vector(side, 0, -back));								//11
+		vertices.add(new Vertex(new Vector(-side, height, back)));							//0
+		vertices.add(new Vertex(new Vector(-side, height, -back)));							//1
+		vertices.add(new Vertex(new Vector(side, height, -back)));							//2
+		vertices.add(new Vertex(new Vector(side, height, back)));							//3
+		vertices.add(new Vertex(new Vector(side, 0, back)));								//4
+		vertices.add(new Vertex(new Vector(-side, 0, back)));								//5
+		vertices.add(new Vertex(new Vector(-side / 2.0, height / 2.5, front / 1.11)));		//6
+		vertices.add(new Vertex(new Vector(-side / 2.0, 0, front)));						//7
+		vertices.add(new Vertex(new Vector(-side, 0, -back)));								//8
+		vertices.add(new Vertex(new Vector(side / 2.0, height / 2.5, front / 1.11)));		//9
+		vertices.add(new Vertex(new Vector(side / 2.0, 0, front)));							//10
+		vertices.add(new Vertex(new Vector(side, 0, -back)));								//11
+		
+		// Sort order: to the right
 		
 		// Top
-		faces.add(new short[] {0, 1, 2, 3});
-		// Head
-		faces.add(new short[] {6, 9, 10, 7});
-		// Right-front side
-		faces.add(new short[] {1, 6, 7, 8});
+		faces.add(new int[] {3, 0, 1, 2});
 		// Right-back side
-		faces.add(new short[] {0, 1, 8, 5});
-		// Back side
-		faces.add(new short[] {0, 3, 4, 5});
+		faces.add(new int[] {0, 5, 8, 1});
+		// Right-front side
+		faces.add(new int[] {8, 7, 6, 1});
+		// Head
+		faces.add(new int[] {7, 10, 9, 6});
 		// Left-front side
-		faces.add(new short[] {2, 9, 10, 11});
+		faces.add(new int[] {10, 11, 2, 9});
 		// Left-back side
-		faces.add(new short[] {3, 2, 11, 4});
+		faces.add(new int[] {11, 4, 3, 2});
+		// Back side
+		faces.add(new int[] {5, 0, 3, 4});
+		// Bottom
+		faces.add(new int[] {5, 4, 11, 10, 7, 8});
+		// Front
+		faces.add(new int[] {2, 1, 6, 9});
+		
+		Normal.CalcPerVertex(vertices, faces);
 	}
 	
-	@Override
-	public void drawNode(GL2 gl) {
+	public void init(GL2 gl)
+	{
+		gl.glNewList(Main.displayList + Main.Displays.HeliBody.ordinal(), GL2.GL_COMPILE);
+		
 		gl.glPushMatrix();
 		
-		ArrayList<Vector> normals;
-		ArrayList<Vector> points = new ArrayList<>();
-		
-		Material.metal(gl);
-
-		gl.glBegin(GL2.GL_QUADS);
-		
-		//// Top
-		/*points.add(new Vector(-side, height, back));
-		points.add(new Vector(-side, height, -back));
-		points.add(new Vector(side, height, -back));
-		points.add(new Vector(side, height, back));*/
-		
-		normals = Normal.CalcPerVertex(points);
-		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-
-		//// Head
 		Material.metal(gl);
 		
-		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
-		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
-		points.add(new Vector(side / 2.0, 0, front));
-		points.add(new Vector(-side / 2.0, 0, front));
-
-		normals = Normal.CalcPerVertex(points);
-		gl.glNormal3d(normals.get(0).x, -normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, -normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, -normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, -normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-
-		//// Right-front side
-		/*points.add(new Vector(-side, height, -back));
-		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
-		points.add(new Vector(-side / 2.0, 0, front));
-		points.add(new Vector(-side, 0, -back));*/
-
-		normals = Normal.CalcPerVertex(points);
-
-		gl.glNormal3d(-normals.get(0).x, normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(-normals.get(1).x, normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(-normals.get(2).x, normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(-normals.get(3).x, normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
+		// -1 to remove drawing front. We need it to be drawn as glass
+		for (int[] face : faces)
+		{
+			int type = face.length == 4 ? GL2.GL_QUADS : GL2.GL_POLYGON;
+			gl.glBegin(type);
+			
+			for (int vertexNo : face)
+			{
+				Vertex v = vertices.get(vertexNo);
+				Vector vN = v.getNormal();
+				Vector vP = v.getPosition();
+				
+				gl.glNormal3d(vN.x, vN.y, vN.z);
+				gl.glVertex3d(vP.x, vP.y, vP.z);
+				
+			}
+			
+			gl.glEnd();
+		}
 		
-		//// Right-back side
-		/*points.add(new Vector(-side, height, back));
-		points.add(new Vector(-side, height, -back));
-		points.add(new Vector(-side, 0, -back));
-		points.add(new Vector(-side, 0, back));*/
-
-		normals = Normal.CalcPerVertex(points);
-
-		gl.glNormal3d(-normals.get(0).x, normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(-normals.get(1).x, normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(-normals.get(2).x, normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(-normals.get(3).x, normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		//// Back side
-		/*points.add(new Vector(-side, height, back));
-		points.add(new Vector(side, height, back));
-		points.add(new Vector(side, 0, back));
-		points.add(new Vector(-side, 0, back));*/
-
-		normals = Normal.CalcPerVertex(points);
-
-		gl.glNormal3d(normals.get(0).x, normals.get(0).y, -normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, normals.get(1).y, -normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, normals.get(2).y, -normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, normals.get(3).y, -normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		//// Left-front side
-		/*points.add(new Vector(side, height, -back));
-		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
-		points.add(new Vector(side / 2.0, 0, front));
-		points.add(new Vector(side, 0, -back));*/
-
-		normals = Normal.CalcPerVertex(points);
-
-		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		// Left-back side
-		points.add(new Vector(side, height, back));
-		points.add(new Vector(side, height, -back));
-		points.add(new Vector(side, 0, -back));
-		points.add(new Vector(side, 0, back));
-
-		normals = Normal.CalcPerVertex(points);
-
-		gl.glNormal3d(normals.get(0).x, normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
-		
-		gl.glEnd();
-
-		//Bottom side
-		gl.glBegin(GL2.GL_POLYGON);
-
-		points.add(new Vector(-side, 0, back));
-		points.add(new Vector(-side, 0, -back));
-		points.add(new Vector(-side / 2.0, 0, front));
-		points.add(new Vector(side / 2.0, 0, front));
-		points.add(new Vector(side, 0, -back));
-		points.add(new Vector(side, 0, back));
-
-		normals = Normal.CalcPerVertex(points);
-		// revert y-axis because this is the bottom of the plane
-
-		gl.glNormal3d(normals.get(0).x, -normals.get(0).y, normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, -normals.get(1).y, normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, -normals.get(2).y, normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, -normals.get(3).y, normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		gl.glNormal3d(normals.get(4).x, -normals.get(4).y, normals.get(4).z);
-		gl.glVertex3dv(points.get(4).ToArray(), 0);
-		gl.glNormal3d(normals.get(5).x, -normals.get(5).y, normals.get(5).z);
-		gl.glVertex3dv(points.get(5).ToArray(), 0);
-		points.clear();
-		
-		gl.glEnd();
-
-		// Front
+		// Draw front glass
 		Material.glass(gl);
 		
 		gl.glBegin(GL2.GL_QUADS);
-
-		points.add(new Vector(side, height, -back));
-		points.add(new Vector(-side, height, -back));
-		points.add(new Vector(-side / 2.0, height / 2.5, front / 1.11));
-		points.add(new Vector(side / 2.0, height / 2.5, front / 1.11));
-
-		normals = Normal.CalcPerVertex(points);
-		gl.glNormal3d(normals.get(0).x, normals.get(0).y, -normals.get(0).z);
-		gl.glVertex3dv(points.get(0).ToArray(), 0);
-		gl.glNormal3d(normals.get(1).x, normals.get(1).y, -normals.get(1).z);
-		gl.glVertex3dv(points.get(1).ToArray(), 0);
-		gl.glNormal3d(normals.get(2).x, normals.get(2).y, -normals.get(2).z);
-		gl.glVertex3dv(points.get(2).ToArray(), 0);
-		gl.glNormal3d(normals.get(3).x, normals.get(3).y, -normals.get(3).z);
-		gl.glVertex3dv(points.get(3).ToArray(), 0);
-		points.clear();
+		
+		int[] front = faces.get(faces.size() - 1);
+		for (int i : front)
+		{
+			Vertex v = vertices.get(i);
+			Vector vN = v.getNormal();
+			Vector vP = v.getPosition();
+			
+			gl.glNormal3d(vN.x, vN.y, vN.z);
+			gl.glVertex3d(vP.x, vP.y, vP.z);
+		}
 		
 		gl.glEnd();
 
         gl.glPopMatrix();
+        
+        gl.glEndList();
+	}
+	
+	@Override
+	public void drawNode(GL2 gl) {
+		gl.glCallList(Main.displayList + Main.Displays.HeliBody.ordinal());
 	}
 
 	@Override

@@ -10,20 +10,20 @@ import scene.Material;
  *
  */
 public class HeliTop extends HeliPart {
-	public final Motor motor;
+	public final Rotor rotor;
 	
 	public HeliTop()
 	{
-		motor = new Motor(2, 7);
-		motor.setPosition(this.Position.Offset(0, 0.3));
-		this.addChild(motor);
+		rotor = new Rotor(2, 7);
+		rotor.setPosition(this.Position.Offset(0, 0.3));
+		this.addChild(rotor);
 	}
 
 	@Override
 	public void drawNode(GL2 gl)
 	{
 		gl.glPushMatrix();
-		Material.chrome(gl);
+		Material.matte(gl);
 		
 		//gl.glColor3d(0.1, 0.1, 0.1);
 		gl.glRotated(-90, 1, 0, 0);

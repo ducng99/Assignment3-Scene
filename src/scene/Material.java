@@ -9,8 +9,8 @@ public class Material {
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		
-		float amb[] = { .0f, .0f, .0f, 1.0f };
-		float diff[] = { 0.64f, 0.8f, 0.55f, 1.0f };
+		float amb[] = { .0f, .05f, .0f, 1.0f };
+		float diff[] = { 0.2f, 0.3f, 0.15f, 1.0f };
 		float spec[] = { 0.2f, 0.35f, 0.25f, 1.0f };
 		float shine = 20.0f;
 		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_AMBIENT, amb, 0);
@@ -19,26 +19,12 @@ public class Material {
 		gl.glMaterialf(GL2.GL_FRONT, GLLightingFunc.GL_SHININESS, shine);
 	}
 	
-	public static void moon(GL2 gl)
-	{
-		gl.glEnable(GL2.GL_LIGHTING);
-		
-		float amb[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float diff[] = { 1f, 1f, 1f, 1.0f };
-		float spec[] = { 1f, 1f, 1f, 1.0f };
-		float shine = 100.0f;
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT, amb, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_DIFFUSE, diff, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_SPECULAR, spec, 0);
-		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_SHININESS, shine);
-	}
-	
 	public static void water(GL2 gl)
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		
-		float amb[] = { 1.f, 1.f, 1.0f, 0.7f };
-		float diff[] = { 0.2f, 0.2f, 0.2f, 0.75f };
+		float amb[] = { 0.2f, 0.2f, 0.2f, 0.7f };
+		float diff[] = { 0.2f, 0.2f, 0.2f, 0.77f };
 		float spec[] = { 1.f, 1.f, 1.f, .9f };
 		float shine = 90.0f;
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT, amb, 0);
@@ -51,8 +37,8 @@ public class Material {
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		
-		float amb[] = { 0.6f, 0.6f, 0.6f, 0.1f };
-		float diff[] = { .6f, .6f, .6f, 0.7f };
+		float amb[] = { 0.4f, 0.4f, 0.4f, 0.1f };
+		float diff[] = { .5f, .5f, .5f, 0.3f };
 		float spec[] = { 0.6f, 0.6f, 0.6f, 0.8f };
 		float shine = 76.8f;
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT, amb, 0);
@@ -75,7 +61,7 @@ public class Material {
 		gl.glMaterialf(GL2.GL_FRONT, GLLightingFunc.GL_SHININESS, shine);
 	}
 
-	public static void chrome(GL2 gl)
+	public static void matte(GL2 gl)
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		

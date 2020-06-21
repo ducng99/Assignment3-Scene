@@ -15,7 +15,7 @@ public class HeliBottom extends HeliPart {
 	{
 		gl.glPushMatrix();
 		
-		Material.chrome(gl);
+		Material.matte(gl);
 		
 		gl.glTranslated(-1.5, 0, 3);
 		gl.glRotated(90, 1, 0, 0);

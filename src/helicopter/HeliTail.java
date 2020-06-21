@@ -11,13 +11,13 @@ import utils.Vector;
  *
  */
 public class HeliTail extends HeliPart {
-	public final Motor motor;
+	public final Rotor rotor;
 	
 	public HeliTail()
 	{
-		motor = new Motor(1, 0.8, 90, Vector.backward);
-		motor.setPosition(Position.Offset(.35, -.5, -6));
-		this.addChild(motor);
+		rotor = new Rotor(1, 0.8, 90, Vector.backward);
+		rotor.setPosition(Position.Offset(.35, -.5, -6));
+		this.addChild(rotor);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class HeliTail extends HeliPart {
 		gl.glPopMatrix();
 		
 		gl.glPushMatrix();
-		Material.chrome(gl);
+		Material.matte(gl);
 		
 		// Blade holder thing		
 		//gl.glColor3d(0.1, 0.1, 0.1);

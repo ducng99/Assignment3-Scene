@@ -39,7 +39,7 @@ public class SkyBox {
 		
 		size = Main.camera.getViewDistance();
 		
-		glu.gluSphere(quadric, size / 2, 20, 30);
+		glu.gluSphere(quadric, size / 2, 10, 15);
 		TextureControl.disableTexture(gl, "Sky");
 		
 		//gl.glRotated(-90, 1, 0, 0);
@@ -54,7 +54,8 @@ public class SkyBox {
 		gl.glPushMatrix();
 		
 		// Follow the camera
-		Vector pos = Main.camera.getPosition();
+		Vector pos = new Vector(Main.camera.getPosition());
+		pos.y = -2;
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		
 		// If view distance is changed, update the display list

@@ -48,7 +48,7 @@ public class Main implements GLEventListener, KeyListener {
 	
 	// Manage display list easier
 	public static enum Displays {
-		Moon, FlatBase, Terrain, Sky
+		Moon, FlatBase, Terrain, Sky, HeliBody
 	}
 
 	public static void main(String[] args) {
@@ -121,9 +121,7 @@ public class Main implements GLEventListener, KeyListener {
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
-		//moon = new Moon(gl);
-		//moon.setPosition(new Vector(skyLighting.getLightPos()));
-		helicopter = new Helicopter();
+		helicopter = new Helicopter(gl);
 	}
 
 	@Override
@@ -163,8 +161,7 @@ public class Main implements GLEventListener, KeyListener {
 		terrain.draw();
 		flatBase.draw();
 		origin.draw(gl);
-		//moon.draw(gl);
-		helicopter.draw(gl);
+		helicopter.draw();
 
 		// Flush all drawing operations to the graphics card
 		gl.glFlush();
