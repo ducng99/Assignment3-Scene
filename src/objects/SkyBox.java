@@ -39,7 +39,7 @@ public class SkyBox {
 		
 		size = Main.camera.getViewDistance();
 		
-		glu.gluSphere(quadric, size / 2, 10, 15);
+		glu.gluSphere(quadric, size / 2, 30, 10);
 		TextureControl.disableTexture(gl, "Sky");
 		
 		gl.glEndList();

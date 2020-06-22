@@ -1,6 +1,8 @@
 package objects;
 
 import com.jogamp.opengl.GL2;
+
+import App.Main;
 import helicopter.HeliBody;
 import helicopter.HeliBottom;
 import helicopter.HeliTail;
@@ -163,7 +165,7 @@ public class Helicopter {
     		tail.rotor.engine.startEngine();
     	}
     	
-    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted())
+    	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted() && Position.y < 40)
     	{
     		Position = Position.Offset(0, 0.1);
     	}
@@ -171,7 +173,10 @@ public class Helicopter {
     
     private void goDown()
     {
-    	if (Position.y <= 0)
+    	// Get current position height of terrain
+    	double terrainHeight = Main.terrain.getHeightAt(Position);
+
+    	if (Position.y <= terrainHeight)
     	{
     		if (!top.rotor.engine.engineStopped())
     			top.rotor.engine.stopEngine();
@@ -179,8 +184,7 @@ public class Helicopter {
     		if (!tail.rotor.engine.engineStopped())
     			tail.rotor.engine.stopEngine();
     	}
-    	
-    	if (Position.y > 0)
+    	else if (Position.y > terrainHeight)
     	{
     		Position = Position.Offset(0, -0.1);
     	}

@@ -4,6 +4,11 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 
+/**
+ * Creates origin with 3 axis
+ * @author Duc Nguyen
+ *
+ */
 public class Origin {
 	private GLU glu = new GLU();
 	private GLUquadric quadric;
@@ -38,5 +43,6 @@ public class Origin {
 		gl.glEnd();
 		
 		gl.glLineWidth(1.0f);
+		gl.glEnable(GL2.GL_LIGHTING);
 	}
 }

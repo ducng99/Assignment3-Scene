@@ -28,7 +28,7 @@ public abstract class TreeNode {
 		gl.glPopMatrix();
 	}
 	
-	public abstract void transformNode(GL2 gl);
-	
 	public abstract void drawNode(GL2 gl);
+	
+	public abstract void transformNode(GL2 gl);
 }

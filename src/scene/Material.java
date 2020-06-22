@@ -23,10 +23,10 @@ public class Material {
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		
-		float amb[] = { 0.5f, 0.5f, 0.5f, 1f };
-		float diff[] = { 0.6f, 0.6f, 0.6f, 1f };
+		float amb[] = { 0.3f, 0.3f, 0.3f, 1f };
+		float diff[] = { 0.5f, 0.5f, 0.5f, 1f };
 		float spec[] = { .8f, .8f, .8f, 1f };
-		float shine = 40.0f;
+		float shine = 50.0f;
 		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_AMBIENT, amb, 0);
 		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_DIFFUSE, diff, 0);
 		gl.glMaterialfv(GL2.GL_FRONT, GLLightingFunc.GL_SPECULAR, spec, 0);
@@ -51,9 +51,9 @@ public class Material {
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		
-		float amb[] = { 0.4f, 0.4f, 0.4f, 0.1f };
-		float diff[] = { .5f, .5f, .5f, 0.3f };
-		float spec[] = { 0.6f, 0.6f, 0.6f, 0.8f };
+		float amb[] = { 0.7f, 0.7f, 0.7f, 0.1f };
+		float diff[] = { .7f, .7f, .7f, 0.3f };
+		float spec[] = { 0.8f, 0.8f, 0.8f, 1f };
 		float shine = 76.8f;
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT, amb, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GLLightingFunc.GL_DIFFUSE, diff, 0);
@@ -65,9 +65,9 @@ public class Material {
 	{
 		gl.glEnable(GL2.GL_LIGHTING);
 		
-		float[] amb = { 0.021f, 0.174f, 0.021f, 1f };
-		float[] diff = { 0.075f, 0.614f, 0.075f, 1f };
-		float[] specular = { 0.633f, 0.727f, 0.633f, 1f };
+		float[] amb = { 0.1f, 0.3f, 0.15f, 1f };
+		float[] diff = { 0.7f, 0.5f, 0.6f, 1f };
+		float[] specular = { 1f, 1f, 1f, 1f };
 		float shine = 90.8f;
 		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, amb, 0);
 		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diff, 0);

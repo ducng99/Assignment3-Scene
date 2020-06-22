@@ -1,5 +1,6 @@
 package App;
 import scene.Camera;
+import scene.Fog;
 import scene.Lighting;
 import scene.TextureControl;
 import utils.Vector;
@@ -46,7 +47,7 @@ public class Main implements GLEventListener, KeyListener {
 	private Origin origin;
 	private Helicopter helicopter;
 	private Road road;
-	private boolean lockCamera = true;
+	private int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
 	
 	public static int displayList;
 	
@@ -109,7 +110,7 @@ public class Main implements GLEventListener, KeyListener {
 				+ "W/S: Move forward or backward\n"
 				+ "A/D: Strafe left or right\n"
 				+ "L: Change flatBase draw mode\n"
-				+ "K: Toggle camera follow helicopter\n");
+				+ "K: Toggle camera mode (0 = Third person, 1 = Free look, 2 = First person)\n");
 	}
 
 	@Override
@@ -126,6 +127,7 @@ public class Main implements GLEventListener, KeyListener {
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glEnable(GL2.GL_LIGHTING);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glClearColor(0.05f, 0.05f, 0.05f, 1.f);
@@ -134,15 +136,22 @@ public class Main implements GLEventListener, KeyListener {
 
 		skyLighting = new Lighting(gl, Lighting.LightType.Directional);
 		skyLighting.setPosition(new Vector(0.8, 1, 1));	// Based on the texture
-        skyLighting.setupLighting();
+        
+        Fog.setupFog(gl);
 
 		camera = new Camera();
 		sky = new SkyBox(gl);
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
-		road = new Road(gl, new Vector(-1, 3, -5), new Vector(-1, 3, 5));
+		road = new Road(gl, new Vector(-20, 2, -HEIGHT), new Vector(-18, 2, HEIGHT));
 		helicopter = new Helicopter(gl);
+        
+        // Setup all available lights
+		for (Lighting light : Lighting.lights)
+    	{
+			light.setupLighting();
+        }
 		
 		System.out.println("Load time: " + (System.currentTimeMillis() - tmpTime) + "ms");
 		frame.remove(loadingLabel);
@@ -171,23 +180,35 @@ public class Main implements GLEventListener, KeyListener {
 
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         
-        if (lockCamera)
-    	{
-        	camera.setEyePos(getCameraPos());
-        	camera.setLookAt(helicopter.Position);
-    	}
+		switch (cameraMode)
+		{
+			case 0:
+	        	camera.setEyePos(getCameraPos(25, 10));
+	        	camera.setLookAt(helicopter.Position);
+	        	break;
+			case 2:
+				camera.setEyePos(getCameraPos(-0.8, 2.9));
+				camera.setLookAt(getCameraPos(-5, 2));
+				break;
+			case 1:
+			default:
+				break;
+		}
 
         gl.glPushMatrix();
 		camera.draw(gl);
 
-		skyLighting.draw();
+		for (Lighting light : Lighting.lights)
+    	{
+			light.draw();
+        }
 
 		sky.draw();
 		terrain.draw();
 		flatBase.draw();
 		origin.draw(gl);
 		helicopter.draw();
-		road.draw();
+		road.draw(gl);
 		
 		gl.glPopMatrix();
 
@@ -199,14 +220,14 @@ public class Main implements GLEventListener, KeyListener {
      * Calculate camera position
      * @return {@link Vector} position
      */
-    private Vector getCameraPos()
+    private Vector getCameraPos(double distance, double height)
     {
     	double rad = Math.toRadians(helicopter.direction);
 
-    	double zOffset = -25 * Math.cos(rad);
-    	double xOffset = 25 * Math.sin(rad);
+    	double xOffset = distance * Math.sin(rad);
+    	double zOffset = -distance * Math.cos(rad);
     	
-    	return helicopter.Position.Offset(xOffset, 10, zOffset);
+    	return helicopter.Position.Offset(xOffset, height, zOffset);
     }
 	
 	private void handlePressedKeyEvents()
@@ -248,7 +269,7 @@ public class Main implements GLEventListener, KeyListener {
 					helicopter.isLookRight = true;
 					break;
 				case KeyEvent.VK_K:
-					lockCamera = !lockCamera;
+					cameraMode = ++cameraMode % 3;
 					break;
 				default:
 					break;

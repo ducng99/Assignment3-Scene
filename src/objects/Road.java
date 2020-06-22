@@ -3,13 +3,20 @@ package objects;
 import com.jogamp.opengl.GL2;
 
 import App.Main;
+import scene.Lighting;
 import scene.Material;
 import scene.TextureControl;
+import scene.TreeNode;
 import utils.Vector;
 
-public class Road {
+/**
+ * A {@link TreeNode} object that draws a road on the terrain and add road lights and trees.
+ * @author Duc Nguyen
+ *
+ */
+public class Road extends TreeNode {
 	private GL2 gl;
-	private double laneWidth = 3;
+	private double laneWidth = 5;
 	private Vector start;
 	private Vector end;
 
@@ -23,14 +30,14 @@ public class Road {
 
 	public void init()
 	{
-		double distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.z - start.z, 2));
+		// Find radian of rotation of the line connect start and end point
+		double distance = end.z - start.z;
+		double distance1 = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(distance, 2));
+		double rad = Math.acos(distance / distance1);
 		
-		double offset = Math.cosh(laneWidth / distance);
-		
-		double rad = Math.toRadians(offset);
-		
-    	double zOffset = laneWidth * Math.sin(rad);
+		// Calculate offsets needed to move (laneWidth) unit
     	double xOffset = laneWidth * Math.cos(rad);
+    	double zOffset = laneWidth * Math.sin(rad);
 
 		gl.glNewList(Main.displayList + Main.Displays.Road.ordinal(), GL2.GL_COMPILE);
 		
@@ -40,14 +47,50 @@ public class Road {
 		gl.glBegin(GL2.GL_QUADS);
     	gl.glNormal3d(0, 1, 0);
     	
-    	gl.glTexCoord2d(0, 1);
-    	gl.glVertex3d(start.x + xOffset, start.y, start.z + zOffset);
-    	gl.glTexCoord2d(0, 0);
-    	gl.glVertex3d(start.x - xOffset, start.y, start.z - zOffset);
-    	gl.glTexCoord2d(1, 0);
-    	gl.glVertex3d(end.x - xOffset, end.y, end.z - zOffset);
-    	gl.glTexCoord2d(1, 1);
-		gl.glVertex3d(end.x + xOffset, end.y, end.z + zOffset);
+    	double textureLength = laneWidth * 1.5;
+    	double loopTimes = distance1 / textureLength;
+    	Vector loopLength = new Vector((end.x - start.x) / loopTimes, 0, (end.z - start.z) / loopTimes);
+    	Vector tmp;
+    	
+    	for (int i = 0; i < loopTimes - 1; i++)
+    	{
+    		// Add 0.1 to height because we are not calculating every point of the road, some part of it might be under terrain
+        	gl.glTexCoord2d(0, 1);
+        	tmp = new Vector(start.x + xOffset + i * loopLength.x, 0, start.z + zOffset + i * loopLength.z);
+        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	
+        	if (i % 5 == 0 && Math.abs((loopTimes / 2 - i)) < 10 && Lighting.lightCount <= 7)
+        	{
+        		StreetLight light = new StreetLight(Math.toDegrees(rad));
+            	light.setPosition(new Vector(tmp.x, Main.terrain.getHeightAt(tmp) + 0.1, tmp.z));
+            	light.setupLight(gl);
+            	this.addChild(light);
+        	}
+        	
+        	gl.glTexCoord2d(0, 0);
+        	tmp = new Vector(start.x - xOffset + i * loopLength.x, 0, start.z - zOffset + i * loopLength.z);
+        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	
+        	gl.glTexCoord2d(1, 0);
+        	tmp = new Vector(start.x - xOffset + (i + 1) * loopLength.x, 0, start.z - zOffset + (i + 1) * loopLength.z);
+        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	
+        	if (i % 5 == 2 && Math.abs((loopTimes / 2 - i)) < 10 && Lighting.lightCount <= 7)
+        	{
+        		StreetLight light = new StreetLight(Math.toDegrees(rad) + 180);
+            	light.setPosition(new Vector(tmp.x, tmp.y, tmp.z));
+            	light.setupLight(gl);
+            	this.addChild(light);
+        	}
+        	
+        	gl.glTexCoord2d(1, 1);
+        	tmp = new Vector(start.x + xOffset + (i + 1) * loopLength.x, 0, start.z + zOffset + (i + 1) * loopLength.z);
+        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+    	}
 		
 		gl.glEnd();
 		
@@ -55,12 +98,18 @@ public class Road {
 		gl.glEndList();
 	}
 	
-	public void draw()
+	@Override
+	public void drawNode(GL2 gl)
 	{
 		gl.glPushMatrix();
 		
 		gl.glCallList(Main.displayList + Main.Displays.Road.ordinal());
 		
 		gl.glPopMatrix();
+	}
+
+	@Override
+	public void transformNode(GL2 gl) {
+		// We use start and end vectors here
 	}
 }

@@ -16,6 +16,11 @@ import scene.Vertex;
 import utils.Normal;
 import utils.Vector;
 
+/**
+ * Handle terrain of the scene. Reads heightmap from file then draw it on the scene
+ * @author Duc Nguyen
+ *
+ */
 public class Terrain {
 	private GL2 gl;
 	private boolean isFilled = true;
@@ -29,6 +34,8 @@ public class Terrain {
     
     private ArrayList<Vertex> vertices = new ArrayList<>();
     private ArrayList<int[]> faces = new ArrayList<>();
+    
+    private final static double heightOffset = -13;
 
     public Terrain(GL2 gl, double width, double height) 
     {
@@ -96,7 +103,7 @@ public class Terrain {
     {
     	gl.glNewList(Main.displayList + Main.Displays.Terrain.ordinal(), GL2.GL_COMPILE);
     	
-    	gl.glTranslated(0, -13, 0);	// Move it down so we can have space for ocean
+    	gl.glTranslated(0, heightOffset, 0);	// Move it down so we can have space for ocean
 
     	if (!isFilled)
 		{
@@ -145,5 +152,39 @@ public class Terrain {
 	{
 		isFilled = !isFilled;
 		init();
+	}
+	
+	/**
+	 * Get the height at given position
+	 * @param point - a {@link Vector} object
+	 * @return height as a double
+	 */
+	public double getHeightAt(Vector p)
+	{
+		double height = 0;
+		
+		for (int[] face : faces)
+		{
+			Vector p0 = vertices.get(face[0]).getPosition();
+			Vector p1 = vertices.get(face[1]).getPosition();
+			Vector p2 = vertices.get(face[2]).getPosition();
+			
+			double area = area(p0, p1, p2);
+			double area1 = area(p, p0, p1);
+			double area2 = area(p, p0, p2);
+			double area3 = area(p, p1, p2);
+			
+			if (Math.floor(area * 100000) == Math.floor((area1 + area2 + area3) * 100000))
+			{
+				height = (p0.y + p1.y + p2.y) / 3 + heightOffset;
+			}
+		}
+		
+		return height;
+	}
+	
+	private double area(Vector a, Vector b, Vector c)
+	{
+		return Math.abs((a.x * (b.z - c.z) + b.x * (c.z - a.z) + c.x * (a.z - b.z)) / 2.0);
 	}
 }

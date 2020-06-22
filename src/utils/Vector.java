@@ -194,4 +194,13 @@ public class Vector {
 	{
 		return new double[] {this.x, this.y, this.z};
 	}
+	
+	/**
+	 * Convert to a float array
+	 * @return float array
+	 */
+	public float[] ToFArray()
+	{
+		return new float[] {(float)this.x, (float)this.y, (float)this.z};
+	}
 }

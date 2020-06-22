@@ -63,7 +63,7 @@ public class Normal {
 		return Vector.Zero;
 	}
 
-	public static void CalcPerVertex(ArrayList<Vertex> vertices, List<int[]> faces)
+	public static void CalcPerVertex(ArrayList<Vertex> vertices, ArrayList<int[]> faces)
 	{
 		// Running in parallel reduces loading time by around 2.2s (more than half)
 		vertices.parallelStream().forEach((vertex) ->
