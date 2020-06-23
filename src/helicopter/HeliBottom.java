@@ -11,6 +11,8 @@ import scene.Material;
  *
  */
 public class HeliBottom extends HeliPart {
+	private int displayListID;
+	
 	public double height = 0.8;
 	public double thickness = 0.1;
 	
@@ -21,7 +23,9 @@ public class HeliBottom extends HeliPart {
 	
 	public void init(GL2 gl)
 	{
-		gl.glNewList(Main.displayList + Main.Displays.HeliBottom.ordinal(), GL2.GL_COMPILE);
+		displayListID = Main.genDisplayList(gl);
+		
+		gl.glNewList(displayListID, GL2.GL_COMPILE);
 		
 		Material.matte(gl);
 		
@@ -66,7 +70,7 @@ public class HeliBottom extends HeliPart {
 		
 		gl.glTranslated(-1.5, -height, -2.5);
 		glu.gluCylinder(quadric, thickness * 1.2, thickness * 1.2, 7, 10, 5);
-		
+
 		gl.glEndList();
 	}
 	
@@ -74,9 +78,7 @@ public class HeliBottom extends HeliPart {
 	public void drawNode(GL2 gl)
 	{
 		gl.glPushMatrix();
-		
-		gl.glCallList(Main.displayList + Main.Displays.HeliBottom.ordinal());
-		
+		gl.glCallList(displayListID);
 		gl.glPopMatrix();
 	}
 }

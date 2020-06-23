@@ -1,8 +1,9 @@
 package App;
 import scene.Camera;
 import scene.Fog;
-import scene.Lighting;
+import scene.LightSource;
 import scene.TextureControl;
+import utils.ObjFile;
 import utils.Vector;
 
 import java.awt.Color;
@@ -11,6 +12,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
@@ -40,7 +43,7 @@ public class Main implements GLEventListener, KeyListener {
 	private final static double HEIGHT = 200;
 	
 	public static Camera camera;
-	public static Lighting skyLighting;
+	public static LightSource skyLighting;
 	public static SkyBox sky;
 	private FlatBase flatBase;
 	public static Terrain terrain;
@@ -48,14 +51,6 @@ public class Main implements GLEventListener, KeyListener {
 	private Helicopter helicopter;
 	private Road road;
 	private int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
-	
-	public static int displayList;
-	
-	// Manage display list easier
-	public static enum Displays {
-		FlatBase, Terrain, Sky, Road,
-		HeliBody, HeliBottom
-	}
 	
 	private JLabel loadingLabel = new JLabel("Loading...");
 	private static JFrame frame;
@@ -121,6 +116,7 @@ public class Main implements GLEventListener, KeyListener {
 		
 		TextureControl.gl = gl;
 		TextureControl.importTextures();
+		ObjFile.importObjects();
 		
 		// Enable VSync
 		gl.setSwapInterval(1);
@@ -131,10 +127,8 @@ public class Main implements GLEventListener, KeyListener {
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glClearColor(0.05f, 0.05f, 0.05f, 1.f);
-        
-        displayList = gl.glGenLists(Displays.values().length);
 
-		skyLighting = new Lighting(gl, Lighting.LightType.Directional);
+		skyLighting = new LightSource(gl, LightSource.LightType.Directional);
 		skyLighting.setPosition(new Vector(0.8, 1, 1));	// Based on the texture
         
         Fog.setupFog(gl);
@@ -144,11 +138,11 @@ public class Main implements GLEventListener, KeyListener {
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
-		road = new Road(gl, new Vector(-20, 2, -HEIGHT), new Vector(-18, 2, HEIGHT));
+		road = new Road(gl, new Vector(-20, 2, -HEIGHT), new Vector(-18, 2, HEIGHT - 1));
 		helicopter = new Helicopter(gl);
         
         // Setup all available lights
-		for (Lighting light : Lighting.lights)
+		for (LightSource light : LightSource.lights)
     	{
 			light.setupLighting();
         }
@@ -198,7 +192,7 @@ public class Main implements GLEventListener, KeyListener {
         gl.glPushMatrix();
 		camera.draw(gl);
 
-		for (Lighting light : Lighting.lights)
+		for (LightSource light : LightSource.lights)
     	{
 			light.draw();
         }
@@ -207,8 +201,10 @@ public class Main implements GLEventListener, KeyListener {
 		terrain.draw();
 		flatBase.draw();
 		origin.draw(gl);
-		helicopter.draw();
 		road.draw(gl);
+		
+		// Draw last for FPP to work
+		helicopter.draw();
 		
 		gl.glPopMatrix();
 
@@ -228,6 +224,11 @@ public class Main implements GLEventListener, KeyListener {
     	double zOffset = -distance * Math.cos(rad);
     	
     	return helicopter.Position.Offset(xOffset, height, zOffset);
+    }
+    
+    public static int genDisplayList(GL2 gl)
+    {
+    	return gl.glGenLists(1);
     }
 	
 	private void handlePressedKeyEvents()

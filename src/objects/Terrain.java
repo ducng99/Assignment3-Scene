@@ -14,6 +14,7 @@ import scene.Material;
 import scene.TextureControl;
 import scene.Vertex;
 import utils.Normal;
+import utils.Utils;
 import utils.Vector;
 
 /**
@@ -23,6 +24,7 @@ import utils.Vector;
  */
 public class Terrain {
 	private GL2 gl;
+	private int displayListID;
 	private boolean isFilled = true;
 
 	private double[][] heightMap = null;
@@ -101,7 +103,9 @@ public class Terrain {
 
     public void init()
     {
-    	gl.glNewList(Main.displayList + Main.Displays.Terrain.ordinal(), GL2.GL_COMPILE);
+    	displayListID = Main.genDisplayList(gl);
+    	
+    	gl.glNewList(displayListID, GL2.GL_COMPILE);
     	
     	gl.glTranslated(0, heightOffset, 0);	// Move it down so we can have space for ocean
 
@@ -134,14 +138,14 @@ public class Terrain {
     	TextureControl.disableTexture(gl, "FlatBase");
     	
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-    	
+
     	gl.glEndList();
     }
     
     public void draw()
     {
     	gl.glPushMatrix();
-    	gl.glCallList(Main.displayList + Main.Displays.Terrain.ordinal());
+    	gl.glCallList(displayListID);
 		gl.glPopMatrix();
     }
 	
@@ -161,7 +165,7 @@ public class Terrain {
 	 */
 	public double getHeightAt(Vector p)
 	{
-		double height = 0;
+		double height = 0.1;	// Offset so other object won't overlap
 		
 		for (int[] face : faces)
 		{
@@ -169,22 +173,18 @@ public class Terrain {
 			Vector p1 = vertices.get(face[1]).getPosition();
 			Vector p2 = vertices.get(face[2]).getPosition();
 			
-			double area = area(p0, p1, p2);
-			double area1 = area(p, p0, p1);
-			double area2 = area(p, p0, p2);
-			double area3 = area(p, p1, p2);
+			double area = Utils.areaTri(p0, p1, p2);
+			double area1 = Utils.areaTri(p, p0, p1);
+			double area2 = Utils.areaTri(p, p0, p2);
+			double area3 = Utils.areaTri(p, p1, p2);
 			
 			if (Math.floor(area * 100000) == Math.floor((area1 + area2 + area3) * 100000))
 			{
-				height = (p0.y + p1.y + p2.y) / 3 + heightOffset;
+				height += (p0.y + p1.y + p2.y) / 3 + heightOffset;
+				return height;
 			}
 		}
 		
 		return height;
-	}
-	
-	private double area(Vector a, Vector b, Vector c)
-	{
-		return Math.abs((a.x * (b.z - c.z) + b.x * (c.z - a.z) + c.x * (a.z - b.z)) / 2.0);
 	}
 }

@@ -24,6 +24,7 @@ public class Helicopter {
 	
 	public Vector Position;
 	public double direction;
+	private double speed = 0.2;
 	
 	public boolean isLeft = false, isRight = false, isForward = false, isBackward = false, isUp = false, isDown = false, isLookLeft = false, isLookRight = false;
 	private long prevTick = System.currentTimeMillis();
@@ -95,10 +96,14 @@ public class Helicopter {
     	{
     		double rad = Math.toRadians(direction);
 
-	    	double zOffset = 0.1 * Math.sin(rad);
-	    	double xOffset = 0.1 * Math.cos(rad);
+	    	double zOffset = speed * Math.sin(rad);
+	    	double xOffset = speed * Math.cos(rad);
 	    	
-	    	Position = Position.Offset(xOffset, 0, zOffset);
+	    	// Get current position height of terrain at the target point
+	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	
+	    	if (Position.y > terrainHeight)
+	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
 
@@ -111,10 +116,14 @@ public class Helicopter {
     	{
 	    	double rad = Math.toRadians(direction);
 	
-	    	double zOffset = -0.1 * Math.sin(rad);
-	    	double xOffset = -0.1 * Math.cos(rad);
+	    	double zOffset = -speed * Math.sin(rad);
+	    	double xOffset = -speed * Math.cos(rad);
 	    	
-	    	Position = Position.Offset(xOffset, 0, zOffset);
+	    	// Get current position height of terrain at the target point
+	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	
+	    	if (Position.y > terrainHeight)
+	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
     
@@ -127,10 +136,14 @@ public class Helicopter {
     	{
 	    	double rad = Math.toRadians(direction);
 	
-	    	double zOffset = 0.1 * Math.cos(rad);
-	    	double xOffset = -0.1 * Math.sin(rad);
+	    	double zOffset = speed * Math.cos(rad);
+	    	double xOffset = -speed * Math.sin(rad);
 	    	
-	    	Position = Position.Offset(xOffset, 0, zOffset);
+	    	// Get current position height of terrain at the target point
+	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	
+	    	if (Position.y > terrainHeight)
+	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
     
@@ -143,10 +156,14 @@ public class Helicopter {
     	{
 	    	double rad = Math.toRadians(direction);
 	
-	    	double zOffset = -0.1 * Math.cos(rad);
-	    	double xOffset = 0.1 * Math.sin(rad);
+	    	double zOffset = -speed * Math.cos(rad);
+	    	double xOffset = speed * Math.sin(rad);
 	    	
-	    	Position = Position.Offset(xOffset, 0, zOffset);
+	    	// Get current position height of terrain at the target point
+	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	
+	    	if (Position.y > terrainHeight)
+	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
     
@@ -167,7 +184,7 @@ public class Helicopter {
     	
     	if (top.rotor.engine.engineStarted() && tail.rotor.engine.engineStarted() && Position.y < 40)
     	{
-    		Position = Position.Offset(0, 0.1);
+    		Position = Position.Offset(0, speed);
     	}
     }
     
@@ -186,7 +203,7 @@ public class Helicopter {
     	}
     	else if (Position.y > terrainHeight)
     	{
-    		Position = Position.Offset(0, -0.1);
+    		Position = Position.Offset(0, -speed);
     	}
     }
     

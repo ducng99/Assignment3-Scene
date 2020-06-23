@@ -1,12 +1,15 @@
 package objects;
 
+import java.util.ArrayList;
+
 import com.jogamp.opengl.GL2;
 
 import App.Main;
-import scene.Lighting;
+import scene.LightSource;
 import scene.Material;
 import scene.TextureControl;
 import scene.TreeNode;
+import utils.Utils;
 import utils.Vector;
 
 /**
@@ -16,9 +19,13 @@ import utils.Vector;
  */
 public class Road extends TreeNode {
 	private GL2 gl;
+	private int displayListID;
 	private double laneWidth = 5;
 	private Vector start;
 	private Vector end;
+	
+	private ArrayList<Tree> trees = new ArrayList<>();
+	private ArrayList<StreetLight> lights = new ArrayList<>();
 
 	public Road(GL2 gl, Vector start, Vector end) {
 		this.gl = gl;
@@ -38,8 +45,10 @@ public class Road extends TreeNode {
 		// Calculate offsets needed to move (laneWidth) unit
     	double xOffset = laneWidth * Math.cos(rad);
     	double zOffset = laneWidth * Math.sin(rad);
+    	
+    	displayListID = Main.genDisplayList(gl);
 
-		gl.glNewList(Main.displayList + Main.Displays.Road.ordinal(), GL2.GL_COMPILE);
+		gl.glNewList(displayListID, GL2.GL_COMPILE);
 		
 		Material.road(gl);
 		TextureControl.setupTexture(gl, "Road");
@@ -48,63 +57,90 @@ public class Road extends TreeNode {
     	gl.glNormal3d(0, 1, 0);
     	
     	double textureLength = laneWidth * 1.5;
-    	double loopTimes = distance1 / textureLength;
+    	double loopTimes = (distance1 / textureLength) * 4;
     	Vector loopLength = new Vector((end.x - start.x) / loopTimes, 0, (end.z - start.z) / loopTimes);
     	Vector tmp;
     	
     	for (int i = 0; i < loopTimes - 1; i++)
     	{
-    		// Add 0.1 to height because we are not calculating every point of the road, some part of it might be under terrain
         	gl.glTexCoord2d(0, 1);
         	tmp = new Vector(start.x + xOffset + i * loopLength.x, 0, start.z + zOffset + i * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
         	
-        	if (i % 5 == 0 && Math.abs((loopTimes / 2 - i)) < 10 && Lighting.lightCount <= 7)
+        	if (i % 20 == 0 && Math.abs((loopTimes / 2 - i)) < 40 && LightSource.lightCount <= 7)
         	{
-        		StreetLight light = new StreetLight(Math.toDegrees(rad));
-            	light.setPosition(new Vector(tmp.x, Main.terrain.getHeightAt(tmp) + 0.1, tmp.z));
-            	light.setupLight(gl);
-            	this.addChild(light);
+        		setupLight(tmp, Math.toDegrees(rad));
+        	}
+        	else if (i % 10 == 0)
+        	{
+        		setupTree(tmp);
         	}
         	
         	gl.glTexCoord2d(0, 0);
         	tmp = new Vector(start.x - xOffset + i * loopLength.x, 0, start.z - zOffset + i * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	
+        	if (i % 20 == 10 && Math.abs((loopTimes / 2 - i)) < 40 && LightSource.lightCount <= 7)
+        	{
+        		setupLight(tmp, Math.toDegrees(rad) + 180);
+        	}
+        	else if (i % 10 == 0)
+        	{
+        		setupTree(tmp);
+        	}
         	
         	gl.glTexCoord2d(1, 0);
         	tmp = new Vector(start.x - xOffset + (i + 1) * loopLength.x, 0, start.z - zOffset + (i + 1) * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
-        	
-        	if (i % 5 == 2 && Math.abs((loopTimes / 2 - i)) < 10 && Lighting.lightCount <= 7)
-        	{
-        		StreetLight light = new StreetLight(Math.toDegrees(rad) + 180);
-            	light.setPosition(new Vector(tmp.x, tmp.y, tmp.z));
-            	light.setupLight(gl);
-            	this.addChild(light);
-        	}
         	
         	gl.glTexCoord2d(1, 1);
         	tmp = new Vector(start.x + xOffset + (i + 1) * loopLength.x, 0, start.z + zOffset + (i + 1) * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp) + 0.1;
+        	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
     	}
 		
 		gl.glEnd();
 		
 		TextureControl.disableTexture(gl, "Road");
+		
 		gl.glEndList();
+		
+		for (StreetLight light : lights)
+		{
+			light.init(gl);
+		}
+		
+		for (Tree tree : trees)
+		{
+			tree.init();
+		}
+	}
+	
+	private void setupLight(Vector tmp, double deg)
+	{
+		StreetLight light = new StreetLight(deg);
+    	light.setPosition(tmp);
+    	light.setupLight(gl);
+    	this.addChild(light);
+    	lights.add(light);
+	}
+	
+	private void setupTree(Vector tmp)
+	{
+		Tree tree = new Tree(gl, Tree.TreeType.values()[Utils.genRand(Tree.TreeType.values().length - 1, 0)]);
+		tree.setPosition(tmp);
+		this.addChild(tree);
+		trees.add(tree);
 	}
 	
 	@Override
 	public void drawNode(GL2 gl)
 	{
 		gl.glPushMatrix();
-		
-		gl.glCallList(Main.displayList + Main.Displays.Road.ordinal());
-		
+		gl.glCallList(displayListID);
 		gl.glPopMatrix();
 	}
 

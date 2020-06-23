@@ -11,6 +11,7 @@ import scene.TextureControl;
 
 public class SkyBox {
 	private GL2 gl;
+	private int displayListID;
 	private GLU glu;
 	private GLUquadric quadric;
 	private double size;
@@ -27,7 +28,9 @@ public class SkyBox {
 
 	public void init()
 	{
-		gl.glNewList(Main.displayList + Main.Displays.Sky.ordinal(), GL2.GL_COMPILE);
+		displayListID = Main.genDisplayList(gl);
+		
+		gl.glNewList(displayListID, GL2.GL_COMPILE);
 		
 		gl.glDisable(GL2.GL_LIGHTING);	// Skybox is just an image, not illuminating
 		
@@ -41,7 +44,7 @@ public class SkyBox {
 		
 		glu.gluSphere(quadric, size / 2, 30, 10);
 		TextureControl.disableTexture(gl, "Sky");
-		
+
 		gl.glEndList();
 	}
 	
@@ -58,7 +61,7 @@ public class SkyBox {
 		if (Main.camera.getViewDistance() != size)
 			init();
 		
-		gl.glCallList(Main.displayList + Main.Displays.Sky.ordinal());
+		gl.glCallList(displayListID);
 		gl.glPopMatrix();
 	}
 }

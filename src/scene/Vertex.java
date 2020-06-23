@@ -10,6 +10,14 @@ public class Vertex {
 		this.Position = Position;
 	}
 
+	public Vertex() {
+		
+	}
+
+	public void setPosition(Vector position) {
+		Position = position;
+	}
+
 	public Vector getPosition() {
 		return Position;
 	}

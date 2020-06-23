@@ -22,6 +22,7 @@ public class FlatBase {
 	private double height = 50;
 	
 	private GL2 gl;
+	private int displayListID;
 
 	public FlatBase(GL2 gl, double width, double height) {
 		this.gl = gl;
@@ -32,7 +33,9 @@ public class FlatBase {
 	
 	private void init()
 	{
-		gl.glNewList(Main.displayList + Main.Displays.FlatBase.ordinal(), GL2.GL_COMPILE);
+		displayListID = Main.genDisplayList(gl);
+		
+		gl.glNewList(displayListID, GL2.GL_COMPILE);
 		
 		gl.glTranslated(0, 0.01, 0);	// Avoid having the same height with terrain, causes flickering
 		
@@ -49,9 +52,9 @@ public class FlatBase {
 		Vector normal;
 		ArrayList<Vector> points = new ArrayList<>();
 		
-		for (double iHeight = -height; iHeight < height; iHeight++)
+		for (double iHeight = -height; iHeight < height - 1; iHeight++)
 		{
-			for (double iWidth = -width; iWidth < width; iWidth++)
+			for (double iWidth = -width; iWidth < width - 1; iWidth++)
 			{
 				points.add(new Vector(iWidth, 0, iHeight));
 				points.add(new Vector(iWidth, 0, iHeight + 1));
@@ -82,16 +85,14 @@ public class FlatBase {
 		TextureControl.disableTexture(gl, "Water");
 		
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-		
+
 		gl.glEndList();
 	}
 
 	public void draw()
 	{
 		gl.glPushMatrix();
-		
-		gl.glCallList(Main.displayList + Main.Displays.FlatBase.ordinal());
-		
+		gl.glCallList(displayListID);
 		gl.glPopMatrix();
 	}
 	
@@ -101,6 +102,7 @@ public class FlatBase {
 	public void toggleDrawMode()
 	{
 		isFilled = !isFilled;
+		gl.glDeleteLists(displayListID, 1);
 		init();
 	}
 

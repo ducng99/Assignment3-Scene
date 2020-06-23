@@ -17,6 +17,7 @@ import utils.Vector;
  *
  */
 public class HeliBody extends TreeNode {
+	private int displayListID;
 	private Vector Position;
 	public double height = 2.5;
 	public double back = -2.5;
@@ -68,7 +69,9 @@ public class HeliBody extends TreeNode {
 	
 	public void init(GL2 gl)
 	{
-		gl.glNewList(Main.displayList + Main.Displays.HeliBody.ordinal(), GL2.GL_COMPILE);
+		displayListID = Main.genDisplayList(gl);
+		
+		gl.glNewList(displayListID, GL2.GL_COMPILE);
 		
 		Material.metal(gl);
 		
@@ -109,14 +112,14 @@ public class HeliBody extends TreeNode {
 		}
 		
 		gl.glEnd();
-        
+
         gl.glEndList();
 	}
 	
 	@Override
 	public void drawNode(GL2 gl) {
 		gl.glPushMatrix();
-		gl.glCallList(Main.displayList + Main.Displays.HeliBody.ordinal());
+		gl.glCallList(displayListID);
         gl.glPopMatrix();
 	}
 

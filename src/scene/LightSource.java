@@ -11,7 +11,7 @@ import utils.Vector;
  * @author Duc Nguyen
  *
  */
-public class Lighting {
+public class LightSource {
 	private GL2 gl;
 	
     private Vector Position = new Vector();
@@ -27,7 +27,7 @@ public class Lighting {
     private LightType type;
     private boolean useGlobalAmbient = false;
     
-    public static ArrayList<Lighting> lights = new ArrayList<>();
+    public static ArrayList<LightSource> lights = new ArrayList<>();
     
     public static enum LightType {
     	Directional, Spotlight
@@ -36,7 +36,7 @@ public class Lighting {
     private int lightID;
     public static int lightCount = 0;
 
-	public Lighting(GL2 gl, LightType type) {
+	public LightSource(GL2 gl, LightType type) {
 		this.gl = gl;
 		this.type = type;
 		
