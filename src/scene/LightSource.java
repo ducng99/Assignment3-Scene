@@ -1,9 +1,12 @@
 package scene;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.jogamp.opengl.GL2;
 
+import App.Main;
 import utils.Vector;
 
 /**
@@ -26,45 +29,26 @@ public class LightSource {
     
     private LightType type;
     private boolean useGlobalAmbient = false;
+    private double distance;
     
     public static ArrayList<LightSource> lights = new ArrayList<>();
+    static class LightDistanceComparator implements Comparator<LightSource> {
+		@Override
+		public int compare(LightSource o1, LightSource o2) {			
+			if (o1.type == LightType.Directional)
+				return -1;
+			else
+				return (int)Math.round(o1.distance - o2.distance);
+		}
+    }
     
     public static enum LightType {
     	Directional, Spotlight
     }
-    
-    private int lightID;
-    public static int lightCount = 0;
 
 	public LightSource(GL2 gl, LightType type) {
 		this.gl = gl;
 		this.type = type;
-		
-		if (lightCount <= 7)
-		{
-			lightID = lightCount++;
-			
-			lights.add(this);
-		}
-		else
-			throw new RuntimeException("You have used all light sources available! Consider reusing them.");	// OpenGL only allows 8 sources
-	}
-	
-	/**
-	 * Enable lighting and set parameters for light
-	 */
-	public void setupLighting()
-	{
-        gl.glEnable(GL2.GL_LIGHTING);
-        
-		gl.glLightfv(GL2.GL_LIGHT0 + lightID, GL2.GL_AMBIENT, ambientLight, 0);
-		gl.glLightfv(GL2.GL_LIGHT0 + lightID, GL2.GL_DIFFUSE, diffuseLight, 0);
-		gl.glLightfv(GL2.GL_LIGHT0 + lightID, GL2.GL_SPECULAR, specularLight, 0);
-		
-		if (useGlobalAmbient)
-			gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globalAmbientLight, 0);
-		
-        gl.glEnable(GL2.GL_LIGHT0 + lightID);
 	}
 	
 	public void setParameters(float[] ambient, float[] diffuse, float[] specular, boolean useGlobalAmbient)
@@ -81,11 +65,39 @@ public class LightSource {
 		this.spotlightCutoff = cutoff;
 	}
 	
+	public static void drawLight()
+	{
+		ArrayList<LightSource> tmp = new ArrayList<>();
+		tmp.addAll(lights);
+		
+		tmp.parallelStream().forEach((light) -> {
+			light.distance = light.Position.distanceTo(Main.helicopter.getPosition());
+		});
+		
+		Collections.sort(tmp, new LightDistanceComparator());
+		for (int i = 0; i < 8 && i < tmp.size(); i++)
+		{
+			LightSource source = tmp.get(i);
+			source.draw(i);
+		}
+	}
+	
 	/**
 	 * Draw light. Set light position
 	 */
-	public void draw()
+	public void draw(int lightID)
 	{
+        gl.glEnable(GL2.GL_LIGHTING);
+        
+		gl.glLightfv(GL2.GL_LIGHT0 + lightID, GL2.GL_AMBIENT, ambientLight, 0);
+		gl.glLightfv(GL2.GL_LIGHT0 + lightID, GL2.GL_DIFFUSE, diffuseLight, 0);
+		gl.glLightfv(GL2.GL_LIGHT0 + lightID, GL2.GL_SPECULAR, specularLight, 0);
+		
+		if (useGlobalAmbient)
+			gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globalAmbientLight, 0);
+		
+        gl.glEnable(GL2.GL_LIGHT0 + lightID);
+        
 		float[] lightPosition = new float[] {(float)Position.x, (float)Position.y, (float)Position.z, type.ordinal()};
 		
 		if (type == LightType.Spotlight)

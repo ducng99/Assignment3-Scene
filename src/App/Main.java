@@ -52,7 +52,7 @@ public class Main implements GLEventListener, KeyListener {
 	private FlatBase flatBase;
 	public static Terrain terrain;
 	private Origin origin;
-	private Helicopter helicopter;
+	public static Helicopter helicopter;
 	private Road road;
 	private int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
 	
@@ -124,7 +124,7 @@ public class Main implements GLEventListener, KeyListener {
 		ObjFile.importObjects();
 		
 		// Enable VSync
-		gl.setSwapInterval(1);
+		gl.setSwapInterval(0);
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
@@ -132,9 +132,6 @@ public class Main implements GLEventListener, KeyListener {
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glClearColor(0.05f, 0.05f, 0.05f, 1.f);
-
-		skyLighting = new LightSource(gl, LightSource.LightType.Directional);
-		skyLighting.setPosition(new Vector(0.8, 1, 1));	// Based on the texture
         
         Fog.setupFog(gl);
 
@@ -146,12 +143,10 @@ public class Main implements GLEventListener, KeyListener {
 		road = new Road(gl, new Vector(-20, 0, -HEIGHT + 1), new Vector(-18, 0, HEIGHT - 2));
 		helicopter = new Helicopter(gl);
 		helicopter.setPosition(Building.highestBuilding.getMiddlePoint());
-        
-        // Setup all available lights
-		for (LightSource light : LightSource.lights)
-    	{
-			light.setupLighting();
-        }
+
+		skyLighting = new LightSource(gl, LightSource.LightType.Directional);
+		skyLighting.setPosition(new Vector(0.8, 1, 1));	// Based on the texture
+		LightSource.lights.add(skyLighting);
 		
 		System.out.println("Load time: " + (System.currentTimeMillis() - tmpTime) + "ms");
 		frame.remove(loadingLabel);
@@ -198,10 +193,7 @@ public class Main implements GLEventListener, KeyListener {
         gl.glPushMatrix();
 		camera.draw(gl);
 
-		for (LightSource light : LightSource.lights)
-    	{
-			light.draw();
-        }
+		LightSource.drawLight();
 
 		sky.draw();
 		terrain.draw();

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.jogamp.opengl.GL2;
 
 import App.Main;
-import scene.LightSource;
 import scene.Material;
 import scene.TextureControl;
 import scene.TreeNode;
@@ -68,7 +67,7 @@ public class Road extends TreeNode {
         	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
         	
-        	if (i % 20 == 0 && Math.abs((loopTimes / 2 - i)) < 40 && LightSource.lightCount <= 7)
+        	if (i % 20 == 0)
         	{
         		setupLight(tmp, Math.toDegrees(rad));
         	}
@@ -82,7 +81,7 @@ public class Road extends TreeNode {
         	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
         	
-        	if (i % 20 == 10 && Math.abs((loopTimes / 2 - i)) < 40 && LightSource.lightCount <= 7)
+        	if (i % 20 == 10)
         	{
         		setupLight(tmp, Math.toDegrees(rad) + 180);
         	}

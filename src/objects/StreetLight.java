@@ -28,6 +28,7 @@ public class StreetLight extends TreeNode {
 	}
 	
 	/**
+	 * Setup light source
 	 * This function was made after 4 hours forgetting to set {@link Position} and still, trying to debug 
 	 * @param gl
 	 */
@@ -42,6 +43,7 @@ public class StreetLight extends TreeNode {
 		light.setPosition(Position.Offset(xOffset, 7.5, zOffset));
 		light.setParameters(new float[] { 0.4f, 0.4f, 0.4f, 0.6f }, new float[] {0.7f, 0.7f, 0.7f, 0.8f}, new float[] {0.9f, 0.9f, 0.9f, 1f}, false);
 		light.setSpotlightParameters(new Vector(0, -1, 0), 40f);
+		LightSource.lights.add(light);
 	}
 	
 	public void init(GL2 gl)

@@ -92,7 +92,11 @@ public class Helicopter {
     	this.Position = pos;
     }
 
-    /**
+    public Vector getPosition() {
+		return Position;
+	}
+
+	/**
      * Calculate offsets on x-axis and z-axis based on direction and move left
      */
     private void strafeLeft()
