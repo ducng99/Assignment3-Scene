@@ -16,12 +16,12 @@ public class Body extends TreeNode {
 	private Vector Position = new Vector();
 	
 	// Length of parts
-	private double side = 1;
-	private double hood = side * 2.2;
-	private double trunk = side;
-	private double height = side * 1.5;
-	private double frontGlass = 0.3;
-	private double backGlass = 0.2;
+	public final double side = 1;
+	public final double hood = side * 2.2;
+	public final double trunk = side;
+	public final double height = side * 1.5;
+	public final double frontGlass = 0.3;
+	public final double backGlass = 0.2;
 	
 	private ArrayList<Vertex> vertices = new ArrayList<>();
 	private ArrayList<int[]> faces = new ArrayList<>();

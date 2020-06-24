@@ -2,33 +2,61 @@ package objects;
 
 import com.jogamp.opengl.GL2;
 
+import App.Main;
 import car.*;
+import scene.TreeNode;
 import utils.Vector;
 
-public class Car {
-	private GL2 gl;
+public class Car extends TreeNode{
 	private Vector Position;
-	private double direction;
+	private double rad;
 	
 	private Body body;
+	private Wheel frontLeftWheel;
+	private Wheel frontRightWheel;
+	private Wheel backLeftWheel;
+	private Wheel backRightWheel;
+	
+	private long prevTick = System.currentTimeMillis();
 
-	public Car(GL2 gl) {
-		this.gl = gl;
+	public Car(GL2 gl, double rad) {
+		this.rad = rad;
 		
 		body = new Body(gl);
-		body.setPosition(new Vector());
+		
+		frontLeftWheel = new Wheel(gl);
+		frontLeftWheel.setPosition(new Vector(body.side, 0, body.side + body.frontGlass + body.hood * 0.6));
+		
+		frontRightWheel = new Wheel(gl);
+		frontRightWheel.setPosition(new Vector(-body.side, 0, body.side + body.frontGlass + body.hood * 0.6));
+		
+		backLeftWheel = new Wheel(gl);
+		backLeftWheel.setPosition(new Vector(body.side, 0, -body.side - body.backGlass));
+		
+		backRightWheel = new Wheel(gl);
+		backRightWheel.setPosition(new Vector(-body.side, 0, -body.side - body.backGlass));
+
+		body.setPosition(new Vector(0, frontLeftWheel.radius));
+		body.addChild(frontLeftWheel);
+		body.addChild(frontRightWheel);
+		body.addChild(backLeftWheel);
+		body.addChild(backRightWheel);
 	}
 	
-	public void draw()
+	private void move()
 	{
-		gl.glPushMatrix();
-		
-		gl.glTranslated(Position.x, Position.y, Position.z);
-		gl.glRotated(-direction, 0, 1, 0);
-		
-		body.draw(gl);
-		
-		gl.glPopMatrix();
+		// Update every frame
+		if (System.currentTimeMillis() - prevTick > 1000 / 60.0)
+		{
+	    	double xOffset = 0.1 * Math.sin(rad);
+	    	double zOffset = 0.1 * Math.cos(rad);
+	    	
+	    	Vector target = Position.Offset(xOffset, 0, zOffset);
+	    	target.y = Main.terrain.getHeightAt(Position);
+	    	Position = target;
+	    	
+	    	prevTick = System.currentTimeMillis();
+		}
 	}
 
 	public Vector getPosition() {
@@ -37,6 +65,23 @@ public class Car {
 
 	public void setPosition(Vector position) {
 		Position = position;
+	}
+
+	@Override
+	public void drawNode(GL2 gl) {
+		gl.glPushMatrix();
+		move();
+		
+		gl.glRotated(-Math.toDegrees(rad), 0, 1, 0);
+		
+		body.draw(gl);
+		
+		gl.glPopMatrix();
+	}
+
+	@Override
+	public void transformNode(GL2 gl) {
+		gl.glTranslated(Position.x, Position.y, Position.z);
 	}
 
 }

@@ -52,7 +52,6 @@ public class Main implements GLEventListener, KeyListener {
 	private FlatBase flatBase;
 	public static Terrain terrain;
 	private Origin origin;
-	private Car car;
 	private Helicopter helicopter;
 	private Road road;
 	private int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
@@ -125,7 +124,7 @@ public class Main implements GLEventListener, KeyListener {
 		ObjFile.importObjects();
 		
 		// Enable VSync
-		gl.setSwapInterval(1);
+		gl.setSwapInterval(0);
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
@@ -145,8 +144,6 @@ public class Main implements GLEventListener, KeyListener {
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
 		road = new Road(gl, new Vector(-20, 0, -HEIGHT + 1), new Vector(-18, 0, HEIGHT - 2));
-		car = new Car(gl);
-		car.setPosition(new Vector(10, 2.5, 0));
 		helicopter = new Helicopter(gl);
 		helicopter.setPosition(Building.highestBuilding.getMiddlePoint());
         
@@ -211,7 +208,6 @@ public class Main implements GLEventListener, KeyListener {
 		flatBase.draw();
 		origin.draw(gl);
 		road.draw(gl);
-		car.draw();
 		
 		// Draw last for FPP to work
 		helicopter.draw();

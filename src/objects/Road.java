@@ -119,6 +119,10 @@ public class Road extends TreeNode {
 		}
 		
 		setupBuildings(rad);
+		
+		Car car = new Car(gl, rad);
+		car.setPosition(start);
+		this.addChild(car);
 	}
 	
 	private void setupLight(Vector tmp, double deg)

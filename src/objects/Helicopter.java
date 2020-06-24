@@ -106,7 +106,7 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
-	    	double buildingHeight = Building.getBuildingHeight(Position);
+	    	double buildingHeight = Building.getBuildingHeight(Position.Offset(xOffset, 0, zOffset));
 	    	
 	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
 	    	
@@ -129,7 +129,7 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
-	    	double buildingHeight = Building.getBuildingHeight(Position);
+	    	double buildingHeight = Building.getBuildingHeight(Position.Offset(xOffset, 0, zOffset));
 	    	
 	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
 	    	
@@ -152,7 +152,7 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
-	    	double buildingHeight = Building.getBuildingHeight(Position);
+	    	double buildingHeight = Building.getBuildingHeight(Position.Offset(xOffset, 0, zOffset));
 	    	
 	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
 	    	
@@ -175,7 +175,7 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
-	    	double buildingHeight = Building.getBuildingHeight(Position);
+	    	double buildingHeight = Building.getBuildingHeight(Position.Offset(xOffset, 0, zOffset));
 	    	
 	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
 	    	
@@ -208,8 +208,8 @@ public class Helicopter {
     private void goDown()
     {
     	// Get current position height of terrain
-    	double terrainHeight = Main.terrain.getHeightAt(Position);
-    	double buildingHeight = Building.getBuildingHeight(Position);
+    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(0, -speed));
+    	double buildingHeight = Building.getBuildingHeight(Position.Offset(0, -speed));
     	
     	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
 
