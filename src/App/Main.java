@@ -124,7 +124,7 @@ public class Main implements GLEventListener, KeyListener {
 		ObjFile.importObjects();
 		
 		// Enable VSync
-		gl.setSwapInterval(0);
+		gl.setSwapInterval(1);
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);

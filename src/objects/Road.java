@@ -119,10 +119,7 @@ public class Road extends TreeNode {
 		}
 		
 		setupBuildings(rad);
-		
-		Car car = new Car(gl, rad);
-		car.setPosition(start);
-		this.addChild(car);
+		setupCars(rad);
 	}
 	
 	private void setupLight(Vector tmp, double deg)
@@ -140,6 +137,45 @@ public class Road extends TreeNode {
 		tree.setPosition(tmp);
 		this.addChild(tree);
 		trees.add(tree);
+	}
+	
+	private void setupCars(double rad)
+	{
+		for (int i = 0; i < 20; i++)
+		{
+			int direction = Utils.genRand(1, 0);	// 0 = go forward, 1 = go back
+			Car car;
+			
+	    	double xOffset = laneWidth * 0.33 * Math.cos(rad);
+	    	double zOffset = laneWidth * 0.33 * Math.sin(rad);
+	    	
+	    	int distanceShift = Utils.genRand(10, -10);
+	    	double xOffsetF = (i * start.distanceTo(end) / 20.0 + distanceShift) * Math.sin(rad);
+	    	double zOffsetF = (i * start.distanceTo(end) / 20.0 + distanceShift) * Math.cos(rad);
+			
+			if (direction == 0)
+			{
+				Vector startPoint = start.Offset(xOffset, 0, zOffset);
+				Vector endPoint = end.Offset(xOffset, 0, zOffset);
+				
+		    	Vector startTmp = startPoint.Offset(xOffsetF, 0, zOffsetF);
+		    	
+				car = new Car(gl, startPoint, startPoint.distanceTo(endPoint), rad);
+				car.setPosition(startTmp);
+			}
+			else
+			{
+				Vector startPoint = start.Offset(-xOffset, 0, -zOffset);
+				Vector endPoint = end.Offset(-xOffset, 0, -zOffset);
+				
+		    	Vector endTmp = endPoint.Offset(-xOffsetF, 0, -zOffsetF);
+		    	
+				car = new Car(gl, endPoint, endPoint.distanceTo(startPoint), rad + Math.PI);
+				car.setPosition(endTmp);
+			}
+			
+			this.addChild(car);
+		}
 	}
 	
 	private void setupBuildings(double rad)

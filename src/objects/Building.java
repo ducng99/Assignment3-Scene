@@ -115,6 +115,25 @@ public class Building extends TreeNode {
 		
 		gl.glEnd();
 		
+		// Add windows
+		Material.glass(gl);
+		
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glNormal3d(-1, 0, 0);
+		
+		for (int level = 0; level < levels; level++)
+		{
+			for (int i = 0; i < (wide - 2) / 3.0; i++)
+			{
+				gl.glVertex3d(-0.01, floorHighest + 1 + level * 5, 1 + i * 3);
+				gl.glVertex3d(-0.01, floorHighest + 1 + level * 5, 1 + i * 3 + 2);
+				gl.glVertex3d(-0.01, floorHighest + 1 + level * 5 + 3, 1 + i * 3 + 2);
+				gl.glVertex3d(-0.01, floorHighest + 1 + level * 5 + 3, 1 + i * 3);
+			}
+		}
+		
+		gl.glEnd();
+		
 		gl.glEndList();
 		
 		buildings.add(this);

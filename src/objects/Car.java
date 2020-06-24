@@ -11,6 +11,9 @@ public class Car extends TreeNode{
 	private Vector Position;
 	private double rad;
 	
+	private Vector start;
+	private double distance;
+	
 	private Body body;
 	private Wheel frontLeftWheel;
 	private Wheel frontRightWheel;
@@ -19,8 +22,10 @@ public class Car extends TreeNode{
 	
 	private long prevTick = System.currentTimeMillis();
 
-	public Car(GL2 gl, double rad) {
+	public Car(GL2 gl, Vector start, double distance, double rad) {
 		this.rad = rad;
+		this.start = start;
+		this.distance = distance;
 		
 		body = new Body(gl);
 		
@@ -43,13 +48,21 @@ public class Car extends TreeNode{
 		body.addChild(backRightWheel);
 	}
 	
+	/**
+	 * Move the car with specified direction, return to start point when reaches end point
+	 */
 	private void move()
 	{
 		// Update every frame
 		if (System.currentTimeMillis() - prevTick > 1000 / 60.0)
 		{
-	    	double xOffset = 0.1 * Math.sin(rad);
-	    	double zOffset = 0.1 * Math.cos(rad);
+			if (start.distanceTo(Position) >= distance)
+			{
+				Position = new Vector(start);
+			}
+			
+	    	double xOffset = 0.15 * Math.sin(rad);
+	    	double zOffset = 0.15 * Math.cos(rad);
 	    	
 	    	Vector target = Position.Offset(xOffset, 0, zOffset);
 	    	target.y = Main.terrain.getHeightAt(Position);
