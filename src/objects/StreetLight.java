@@ -39,8 +39,8 @@ public class StreetLight extends TreeNode {
 		double zOffset = -1.2 * Math.sin(rad);
 		
 		light = new LightSource(gl, LightSource.LightType.Spotlight);
-		light.setPosition(Position.Offset(xOffset, 5.5, zOffset));
-		light.setParameters(new float[] { 0.4f, 0.4f, 0.4f, 1f }, new float[] {0.8f, 0.8f, 0.8f, 1f}, new float[] {0.9f, 0.9f, 0.9f, 1f}, false);
+		light.setPosition(Position.Offset(xOffset, 7.5, zOffset));
+		light.setParameters(new float[] { 0.4f, 0.4f, 0.4f, 0.6f }, new float[] {0.7f, 0.7f, 0.7f, 0.8f}, new float[] {0.9f, 0.9f, 0.9f, 1f}, false);
 		light.setSpotlightParameters(new Vector(0, -1, 0), 40f);
 	}
 	
@@ -53,12 +53,12 @@ public class StreetLight extends TreeNode {
 		
 		// Stand
 		gl.glRotated(-90, 1, 0, 0);
-		glu.gluCylinder(quadric, .06, .06, 6, 5, 2);
+		glu.gluCylinder(quadric, .06, .06, 8, 5, 2);
 		
 		gl.glRotated(90, 1, 0, 0);
 		
 		// Light hanger
-		gl.glTranslated(0, 5.5, 0);
+		gl.glTranslated(0, 7.5, 0);
 		gl.glRotated(direction - 90, 0, 1, 0);
 		glu.gluCylinder(quadric, .06, .06, 1.5, 5, 2);
 		

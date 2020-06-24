@@ -16,7 +16,7 @@ import utils.Vector;
  * @author Duc Nguyen
  *
  */
-public class HeliBody extends TreeNode {
+public class Body extends TreeNode {
 	private int displayListID;
 	private Vector Position;
 	public double height = 2.5;
@@ -27,7 +27,7 @@ public class HeliBody extends TreeNode {
 	private ArrayList<Vertex> vertices = new ArrayList<>();
 	private ArrayList<int[]> faces = new ArrayList<>();
 
-	public HeliBody(GL2 gl) {
+	public Body(GL2 gl) {
 		vertices.add(new Vertex(new Vector(-side, height, back)));							//0
 		vertices.add(new Vertex(new Vector(-side, height, -back)));							//1
 		vertices.add(new Vertex(new Vector(side, height, -back)));							//2
@@ -47,12 +47,6 @@ public class HeliBody extends TreeNode {
 		faces.add(new int[] {3, 0, 1, 2});
 		// Right-back side
 		faces.add(new int[] {0, 5, 8, 1});
-		// Right-front side
-		faces.add(new int[] {8, 7, 6, 1});
-		// Head
-		faces.add(new int[] {7, 10, 9, 6});
-		// Left-front side
-		faces.add(new int[] {10, 11, 2, 9});
 		// Left-back side
 		faces.add(new int[] {11, 4, 3, 2});
 		// Back side
@@ -61,6 +55,12 @@ public class HeliBody extends TreeNode {
 		faces.add(new int[] {5, 4, 11, 10, 7, 8});
 		// Front
 		faces.add(new int[] {2, 1, 6, 9});
+		// Right-front window
+		faces.add(new int[] {8, 7, 6, 1});
+		// Left-front window
+		faces.add(new int[] {10, 11, 2, 9});
+		// Head window
+		faces.add(new int[] {7, 10, 9, 6});
 		
 		Normal.CalcPerVertex(vertices, faces);
 		
@@ -75,11 +75,10 @@ public class HeliBody extends TreeNode {
 		
 		Material.metal(gl);
 		
-		// -1 to remove drawing front. We need it to be drawn as glass
-		for (int i = 0; i < faces.size() - 1; i++)
+		// Remove drawing glasses
+		for (int i = 0; i < faces.size() - 4; i++)
 		{
-			int type = faces.get(i).length == 4 ? GL2.GL_QUADS : GL2.GL_POLYGON;
-			gl.glBegin(type);
+			gl.glBegin(GL2.GL_POLYGON);
 			
 			for (int vertexNo : faces.get(i))
 			{
@@ -87,31 +86,50 @@ public class HeliBody extends TreeNode {
 				Vector vN = v.getNormal();
 				Vector vP = v.getPosition();
 				
-				gl.glNormal3d(vN.x, vN.y, vN.z);
-				gl.glVertex3d(vP.x, vP.y, vP.z);
+				gl.glNormal3dv(vN.ToArray(), 0);
+				gl.glVertex3dv(vP.ToArray(), 0);
 				
 			}
 			
 			gl.glEnd();
 		}
 		
-		// Draw front glass
-		Material.glass(gl);
+		// Draw glasses
 		
-		gl.glBegin(GL2.GL_QUADS);
-		
-		int[] front = faces.get(faces.size() - 1);
-		for (int i : front)
+		for (int i = faces.size() - 4; i < faces.size(); i++)
 		{
-			Vertex v = vertices.get(i);
-			Vector vN = v.getNormal();
-			Vector vP = v.getPosition();
+			Material.glass(gl);
+			gl.glBegin(GL2.GL_POLYGON);
 			
-			gl.glNormal3d(vN.x, vN.y, vN.z);
-			gl.glVertex3d(vP.x, vP.y, vP.z);
+			for (int vIndex : faces.get(i))
+			{
+				Vertex v = vertices.get(vIndex);
+				Vector vN = v.getNormal();
+				Vector vP = v.getPosition().Multiply(new Vector(0.99, 1, 0.99));
+				
+				gl.glNormal3dv(vN.ToArray(), 0);
+				gl.glVertex3dv(vP.ToArray(), 0);
+			}
+			
+			gl.glEnd();
+
+			Material.metal(gl);
+			gl.glLineWidth(3);
+			gl.glBegin(GL2.GL_LINE_LOOP);
+			
+			for (int vIndex : faces.get(i))
+			{
+				Vertex vertex = vertices.get(vIndex);
+				Vector vN = vertex.getNormal();
+				Vector vP = vertex.getPosition();
+				
+				gl.glNormal3dv(vN.ToArray(), 0);
+				gl.glVertex3dv(vP.ToArray(), 0);
+			}
+			
+			gl.glEnd();
+			gl.glLineWidth(1);
 		}
-		
-		gl.glEnd();
 
         gl.glEndList();
 	}

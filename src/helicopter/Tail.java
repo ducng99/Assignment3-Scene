@@ -10,10 +10,10 @@ import utils.Vector;
  * @author Duc Nguyen
  *
  */
-public class HeliTail extends HeliPart {
+public class Tail extends HeliPart {
 	public final Rotor rotor;
 	
-	public HeliTail()
+	public Tail()
 	{
 		rotor = new Rotor(1, 0.8, 90, Vector.backward);
 		rotor.setPosition(Position.Offset(.35, -.5, -6));

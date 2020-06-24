@@ -9,10 +9,10 @@ import scene.Material;
  * @author Duc Nguyen
  *
  */
-public class HeliTop extends HeliPart {
+public class Top extends HeliPart {
 	public final Rotor rotor;
 	
-	public HeliTop()
+	public Top()
 	{
 		rotor = new Rotor(2, 7);
 		rotor.setPosition(this.Position.Offset(0, 0.3));

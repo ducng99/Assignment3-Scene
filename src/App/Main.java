@@ -1,4 +1,5 @@
 package App;
+
 import scene.Camera;
 import scene.Fog;
 import scene.LightSource;
@@ -12,8 +13,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
@@ -24,6 +23,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 import objects.*;
 
@@ -42,12 +42,17 @@ public class Main implements GLEventListener, KeyListener {
 	private final static double WIDTH = 200;
 	private final static double HEIGHT = 200;
 	
+	private static Animator animator;
+	private static final GLUT glut = new GLUT();
+	private static final int font = GLUT.BITMAP_HELVETICA_12;
+	
 	public static Camera camera;
 	public static LightSource skyLighting;
 	public static SkyBox sky;
 	private FlatBase flatBase;
 	public static Terrain terrain;
 	private Origin origin;
+	private Car car;
 	private Helicopter helicopter;
 	private Road road;
 	private int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
@@ -73,7 +78,8 @@ public class Main implements GLEventListener, KeyListener {
 
 		frame.add(canvas);
 		frame.setSize(1280, 960);
-		final Animator animator = new Animator(canvas);
+		animator = new Animator(canvas);
+		animator.setUpdateFPSFrames(100, null);
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -138,8 +144,11 @@ public class Main implements GLEventListener, KeyListener {
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
-		road = new Road(gl, new Vector(-20, 2, -HEIGHT), new Vector(-18, 2, HEIGHT - 1));
+		road = new Road(gl, new Vector(-20, 0, -HEIGHT + 1), new Vector(-18, 0, HEIGHT - 2));
+		car = new Car(gl);
+		car.setPosition(new Vector(10, 2.5, 0));
 		helicopter = new Helicopter(gl);
+		helicopter.setPosition(Building.highestBuilding.getMiddlePoint());
         
         // Setup all available lights
 		for (LightSource light : LightSource.lights)
@@ -202,12 +211,14 @@ public class Main implements GLEventListener, KeyListener {
 		flatBase.draw();
 		origin.draw(gl);
 		road.draw(gl);
+		car.draw();
 		
 		// Draw last for FPP to work
 		helicopter.draw();
 		
 		gl.glPopMatrix();
-
+		
+		DrawDebugText(gl);
 		// Flush all drawing operations to the graphics card
 		gl.glFlush();
 	}
@@ -225,6 +236,50 @@ public class Main implements GLEventListener, KeyListener {
     	
     	return helicopter.Position.Offset(xOffset, height, zOffset);
     }
+	
+    /**
+     * Draw debug texts on screen in 2D. Includes FPS, helicopter position and camera position.
+     * Solution from <a href="https://stackoverflow.com/questions/18847109/displaying-fixed-location-2d-text-in-a-3d-opengl-world-using-glut">this topic</a>
+     * @param gl
+     */
+	private void DrawDebugText(GL2 gl)
+	{
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+
+		gl.glOrtho(0, frame.getSize().getWidth(), 0, frame.getSize().getHeight(), -1, 1);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+		gl.glDisable(GL2.GL_LIGHTING);
+
+		gl.glColor4d(1, 1, 0, 0.8);
+		
+		gl.glRasterPos2d(0, frame.getSize().getHeight() - 12);
+		glut.glutBitmapString(font, "FPS: " + Math.round(getFPS()));
+		gl.glRasterPos2d(0, frame.getSize().getHeight() - 12 - 15);
+		Vector heliPos = helicopter.Position;
+		glut.glutBitmapString(font, "Helicopter pos: " + (Math.round(heliPos.x * 100) / 100.0) + " " + (Math.round(heliPos.y * 100) / 100.0) + " " + (Math.round(heliPos.z * 100) / 100.0));
+		gl.glRasterPos2d(0, frame.getSize().getHeight() - 12 - 15 - 15);
+		Vector cameraPos = camera.getPosition();
+		glut.glutBitmapString(font, "Camera pos: " + (Math.round(cameraPos.x * 100) / 100.0) + " " + (Math.round(cameraPos.y * 100) / 100.0) + " " + (Math.round(cameraPos.z * 100) / 100.0));
+		
+		gl.glEnable(GL2.GL_LIGHTING);
+
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPopMatrix();
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPopMatrix();
+	}
+	
+	private static double getFPS()
+	{
+		if (animator.getLastFPS() == 0.0f)
+			return 60;
+		else
+			return animator.getLastFPS();
+	}
     
     public static int genDisplayList(GL2 gl)
     {

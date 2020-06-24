@@ -31,6 +31,17 @@ public class Utils {
 	{
 		return rand.nextInt(max - min + 1) + min;
 	}
+
+	/**
+	 * Generate a random float between max (inclusive) and min (inclusive)
+	 * @param max - an float
+	 * @param min - an float
+	 * @return a random float number
+	 */
+	public static float genRand(float max, float min)
+	{
+		return rand.nextFloat() * (max - min + 1) + min;
+	}
 	
 	/**
 	 * Calculate the area of a triangle from 3 points
@@ -42,5 +53,10 @@ public class Utils {
 	public static double areaTri(Vector a, Vector b, Vector c)
 	{
 		return Math.abs((a.x * (b.z - c.z) + b.x * (c.z - a.z) + c.x * (a.z - b.z)) / 2.0);
+	}
+	
+	public static double areaQuad(Vector a, Vector b, Vector c, Vector d)
+	{
+		return areaTri(a, b, c) + areaTri(b, c, d);
 	}
 }

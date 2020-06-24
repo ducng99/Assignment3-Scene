@@ -177,13 +177,38 @@ public class Vector {
 	}
 	
 	/**
-	 * Calculate cross of 2 vectors
+	 * Calculate cross product of 2 vectors
 	 * @param a
 	 * @return a new {@link Vector}
 	 */
 	public Vector Cross(Vector a)
 	{
 		return new Vector(this.y * a.z - this.z * a.y, this.z * a.x - this.x * a.z, this.x * a.y - this.y * a.x);
+	}
+	
+	/**
+	 * Multiply each axis of current vector with relative axis of a
+	 * @param a - a {@link Vector} object
+	 * @return a new {@link Vector}
+	 */
+	public Vector Multiply(Vector a)
+	{
+		return new Vector(this.x * a.x, this.y * a.y, this.z * a.z);
+	}
+	
+	/**
+	 * Multiply each axis of current vector with a
+	 * @param a - a double
+	 * @return a new {@link Vector}
+	 */
+	public Vector Multiply(double a)
+	{
+		return new Vector(this.x * a, this.y * a, this.z * a);
+	}
+	
+	public double distanceTo(Vector a)
+	{
+		return Math.sqrt(Math.pow(a.x - this.x, 2) + Math.pow(a.y - this.y, 2) + Math.pow(a.z - this.z, 2));
 	}
 	
 	/**

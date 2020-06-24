@@ -3,6 +3,8 @@ package scene;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 
+import utils.Utils;
+
 public class Material {
 
 	public static void ground(GL2 gl)
@@ -96,6 +98,21 @@ public class Material {
 		float[] amb = { 0.043f, 0.173f, 0.043f, 1.0f };
 		float[] diff = { 0.133f, 0.545f, 0.133f, 1.0f };
 		float[] specular = { 0.165f, 0.671f, 0.165f, 1.0f };
+		float shine = 10.0f;
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, amb, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diff, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+		gl.glMaterialf(GL2.GL_FRONT, GLLightingFunc.GL_SHININESS, shine);
+	}
+	
+	public static void building(GL2 gl)
+	{
+		gl.glEnable(GL2.GL_LIGHTING);
+	
+		// Generate random colours for buildings to make them less lame
+		float[] amb = { Utils.genRand(0.1f, 0), Utils.genRand(0.1f, 0f), Utils.genRand(0.1f, 0f), 1.0f };
+		float[] diff = { amb[0] + 0.05f, amb[1] + 0.05f, amb[2] + 0.05f, 1.0f };
+		float[] specular = { amb[0] + 0.05f, amb[1] + 0.05f, amb[2] + 0.05f, 1.0f };
 		float shine = 10.0f;
 		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, amb, 0);
 		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diff, 0);

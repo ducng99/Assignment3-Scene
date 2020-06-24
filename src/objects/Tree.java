@@ -20,13 +20,14 @@ public class Tree extends TreeNode {
 	private ArrayList<Vertex> vertices;
 	private ArrayList<int[]> faces;
 	
-	private double rotation = Utils.genRand(360, 0);
+	private double rotation = Utils.genRand(360.0, 0);
 	
 	public static enum TreeType {
 		Palm("PalmTree"),
-		Fir("FirTree");
+		Fir("FirTree"),
+		Poplar("PoplarTree");
 		
-		TreeType(String name)
+		private TreeType(String name)
 		{
 			this.name = name;
 		}
@@ -55,13 +56,13 @@ public class Tree extends TreeNode {
 		
 		// Randomly rotate the tree
 		gl.glRotated(rotation, 0, 1, 0);
+		gl.glScaled(1.3, 1.3, 1.3);		// Base model seems too small
 		
 		Material.tree(gl);
 		
 		for (int[] face : faces)
 		{
-			int drawtype = (faces.size() == 3 ? GL2.GL_TRIANGLES : GL2.GL_QUADS);
-			gl.glBegin(drawtype);
+			gl.glBegin(GL2.GL_POLYGON);
 			
 			for (int vIndex : face)
 			{

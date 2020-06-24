@@ -43,7 +43,7 @@ public class Terrain {
     {
     	this.gl = gl;
     	this.width = width;
-    	this.height = height;
+    	this.height = height - 1;
     	
         try 
         {
@@ -177,7 +177,8 @@ public class Terrain {
 			double area1 = Utils.areaTri(p, p0, p1);
 			double area2 = Utils.areaTri(p, p0, p2);
 			double area3 = Utils.areaTri(p, p1, p2);
-			
+
+			// Multiply and floor because of double-precision error
 			if (Math.floor(area * 100000) == Math.floor((area1 + area2 + area3) * 100000))
 			{
 				height += (p0.y + p1.y + p2.y) / 3 + heightOffset;

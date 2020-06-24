@@ -14,7 +14,7 @@ import utils.Vector;
 public class Camera {
 
 	private static final double FOV = 68;
-	private double viewDistance = 300;
+	private double viewDistance = 300;	// Actual view distance is halved
 	
 	private Vector Position = new Vector();
 	private Vector lookAtPos = new Vector();

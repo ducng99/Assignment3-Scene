@@ -10,13 +10,13 @@ import scene.Material;
  * @author Duc Nguyen
  *
  */
-public class HeliBottom extends HeliPart {
+public class Bottom extends HeliPart {
 	private int displayListID;
 	
 	public double height = 0.8;
 	public double thickness = 0.1;
 	
-	public HeliBottom(GL2 gl)
+	public Bottom(GL2 gl)
 	{
 		init(gl);
 	}

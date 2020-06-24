@@ -35,12 +35,13 @@ public class ObjFile {
 	{
 		objectsMap.put("PalmTree", new ObjFile("./others/obj/Palm_Tree.obj"));
 		objectsMap.put("FirTree", new ObjFile("./others/obj/Fir_Tree.obj"));
+		objectsMap.put("PoplarTree", new ObjFile("./others/obj/Poplar_Tree.obj"));
 	}
 
 	/**
 	 * Method that process .obj file and output usable details
 	 * @param path - file path to .obj file
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void readObjFile() throws IOException
 	{

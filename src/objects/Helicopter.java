@@ -3,10 +3,10 @@ package objects;
 import com.jogamp.opengl.GL2;
 
 import App.Main;
-import helicopter.HeliBody;
-import helicopter.HeliBottom;
-import helicopter.HeliTail;
-import helicopter.HeliTop;
+import helicopter.Body;
+import helicopter.Bottom;
+import helicopter.Tail;
+import helicopter.Top;
 import utils.Vector;
 
 /**
@@ -17,10 +17,10 @@ import utils.Vector;
 public class Helicopter {
 	private GL2 gl;
 	
-	private final HeliBody body;
-	private final HeliTop top;
-	private final HeliTail tail;
-	private final HeliBottom bottom;
+	private final Body body;
+	private final Top top;
+	private final Tail tail;
+	private final Bottom bottom;
 	
 	public Vector Position;
 	public double direction;
@@ -34,15 +34,15 @@ public class Helicopter {
         Position = new Vector();
         direction = 0.0;
         
-        body = new HeliBody(gl);
+        body = new Body(gl);
         
-    	top = new HeliTop();
+    	top = new Top();
     	top.setPosition(new Vector(0, body.height));
     	
-    	tail = new HeliTail();
+    	tail = new Tail();
     	tail.setPosition(new Vector(0, body.height, body.back));
     	
-    	bottom = new HeliBottom(gl);
+    	bottom = new Bottom(gl);
     	bottom.setPosition(new Vector());
     	
     	// Leave space for bottom
@@ -86,6 +86,11 @@ public class Helicopter {
         body.draw(gl);
         gl.glPopMatrix();
     }
+    
+    public void setPosition(Vector pos)
+    {
+    	this.Position = pos;
+    }
 
     /**
      * Calculate offsets on x-axis and z-axis based on direction and move left
@@ -101,8 +106,11 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	double buildingHeight = Building.getBuildingHeight(Position);
 	    	
-	    	if (Position.y > terrainHeight)
+	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
+	    	
+	    	if (Position.y > minHeight)
 	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
@@ -121,8 +129,11 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	double buildingHeight = Building.getBuildingHeight(Position);
 	    	
-	    	if (Position.y > terrainHeight)
+	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
+	    	
+	    	if (Position.y > minHeight)
 	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
@@ -141,8 +152,11 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	double buildingHeight = Building.getBuildingHeight(Position);
 	    	
-	    	if (Position.y > terrainHeight)
+	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
+	    	
+	    	if (Position.y > minHeight)
 	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
@@ -161,8 +175,11 @@ public class Helicopter {
 	    	
 	    	// Get current position height of terrain at the target point
 	    	double terrainHeight = Main.terrain.getHeightAt(Position.Offset(xOffset, 0, zOffset));
+	    	double buildingHeight = Building.getBuildingHeight(Position);
 	    	
-	    	if (Position.y > terrainHeight)
+	    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
+	    	
+	    	if (Position.y > minHeight)
 	    		Position = Position.Offset(xOffset, 0, zOffset);
     	}
     }
@@ -192,8 +209,11 @@ public class Helicopter {
     {
     	// Get current position height of terrain
     	double terrainHeight = Main.terrain.getHeightAt(Position);
+    	double buildingHeight = Building.getBuildingHeight(Position);
+    	
+    	double minHeight = buildingHeight > terrainHeight ? buildingHeight : terrainHeight;
 
-    	if (Position.y <= terrainHeight)
+    	if (Position.y <= minHeight)
     	{
     		if (!top.rotor.engine.engineStopped())
     			top.rotor.engine.stopEngine();
@@ -201,7 +221,7 @@ public class Helicopter {
     		if (!tail.rotor.engine.engineStopped())
     			tail.rotor.engine.stopEngine();
     	}
-    	else if (Position.y > terrainHeight)
+    	else if (Position.y > minHeight)
     	{
     		Position = Position.Offset(0, -speed);
     	}

@@ -37,7 +37,7 @@ public class Road extends TreeNode {
 
 	public void init()
 	{
-		// Find radian of rotation of the line connect start and end point
+		// Find radian of rotation of the line connect start and end point (discard height -> 2D calc)
 		double distance = end.z - start.z;
 		double distance1 = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(distance, 2));
 		double rad = Math.acos(distance / distance1);
@@ -63,7 +63,7 @@ public class Road extends TreeNode {
     	
     	for (int i = 0; i < loopTimes - 1; i++)
     	{
-        	gl.glTexCoord2d(0, 1);
+        	gl.glTexCoord2d(i / 4.0, 1);
         	tmp = new Vector(start.x + xOffset + i * loopLength.x, 0, start.z + zOffset + i * loopLength.z);
         	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
@@ -77,7 +77,7 @@ public class Road extends TreeNode {
         		setupTree(tmp);
         	}
         	
-        	gl.glTexCoord2d(0, 0);
+        	gl.glTexCoord2d(i / 4.0, 0);
         	tmp = new Vector(start.x - xOffset + i * loopLength.x, 0, start.z - zOffset + i * loopLength.z);
         	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
@@ -91,12 +91,12 @@ public class Road extends TreeNode {
         		setupTree(tmp);
         	}
         	
-        	gl.glTexCoord2d(1, 0);
+        	gl.glTexCoord2d((i + 1) / 4.0, 0);
         	tmp = new Vector(start.x - xOffset + (i + 1) * loopLength.x, 0, start.z - zOffset + (i + 1) * loopLength.z);
         	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
         	
-        	gl.glTexCoord2d(1, 1);
+        	gl.glTexCoord2d((i + 1) / 4.0, 1);
         	tmp = new Vector(start.x + xOffset + (i + 1) * loopLength.x, 0, start.z + zOffset + (i + 1) * loopLength.z);
         	tmp.y = Main.terrain.getHeightAt(tmp);
         	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
@@ -117,6 +117,8 @@ public class Road extends TreeNode {
 		{
 			tree.init();
 		}
+		
+		setupBuildings(rad);
 	}
 	
 	private void setupLight(Vector tmp, double deg)
@@ -134,6 +136,36 @@ public class Road extends TreeNode {
 		tree.setPosition(tmp);
 		this.addChild(tree);
 		trees.add(tree);
+	}
+	
+	private void setupBuildings(double rad)
+	{
+		double startPoint = 0;
+		double distance = start.distanceTo(end);
+		
+		double direction = Math.toDegrees(rad);
+    	double xOffset = (laneWidth + 2) * Math.cos(rad);
+    	double zOffset = (laneWidth + 2) * Math.sin(rad);
+		
+		do
+		{
+			Building building = new Building(gl, direction);
+			double wide = building.getWide();
+			
+			if (startPoint + wide < distance)
+			{
+				double xOffset2 = xOffset + Math.sin(rad) * startPoint;
+				double zOffset2 = zOffset + Math.cos(rad) * startPoint;
+				building.setPosition(start.Offset(xOffset2, 0, zOffset2));
+				building.init();
+				this.addChild(building);
+				
+				startPoint += wide + 2;		// Leave some space between buildings
+			}
+			else
+				break;
+		}
+		while (startPoint < distance);
 	}
 	
 	@Override
