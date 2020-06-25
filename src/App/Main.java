@@ -39,8 +39,9 @@ public class Main implements GLEventListener, KeyListener {
 	// Key released events queue
 	private final LinkedBlockingQueue<KeyEvent> keyReleasedEventsQ = new LinkedBlockingQueue<>();
 	
-	private final static double WIDTH = 200;
-	private final static double HEIGHT = 200;
+	private final static double WIDTH = 100;
+	private final static double HEIGHT = 156;
+	private boolean isFilled;
 	
 	private static Animator animator;
 	private static final GLUT glut = new GLUT();
@@ -124,7 +125,7 @@ public class Main implements GLEventListener, KeyListener {
 		ObjFile.importObjects();
 		
 		// Enable VSync
-		gl.setSwapInterval(0);
+		gl.setSwapInterval(1);
 		// Setup the drawing area and shading mode
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
@@ -140,7 +141,7 @@ public class Main implements GLEventListener, KeyListener {
 		terrain = new Terrain(gl, WIDTH, HEIGHT);
 		flatBase = new FlatBase(gl, WIDTH, HEIGHT);
 		origin = new Origin();
-		road = new Road(gl, new Vector(-20, 0, -HEIGHT + 1), new Vector(-18, 0, HEIGHT - 2));
+		road = new Road(gl, new Vector(20, 0, -HEIGHT + 1), new Vector(46, 0, HEIGHT - 2));
 		helicopter = new Helicopter(gl);
 		helicopter.setPosition(Building.highestBuilding.getMiddlePoint());
 
@@ -194,6 +195,11 @@ public class Main implements GLEventListener, KeyListener {
 		camera.draw(gl);
 
 		LightSource.drawLight();
+
+    	if (!isFilled)
+    		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+    	else
+    		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 
 		sky.draw();
 		terrain.draw();
@@ -283,10 +289,7 @@ public class Main implements GLEventListener, KeyListener {
 			switch(event.getKeyCode())
 			{
 				case KeyEvent.VK_L:
-					// Change flatBase draw mode
-					flatBase.toggleDrawMode();
-					// Change terrain draw mode
-					terrain.toggleDrawMode();
+					isFilled = !isFilled;
 					break;
 				case KeyEvent.VK_W:
 					helicopter.isForward = true;

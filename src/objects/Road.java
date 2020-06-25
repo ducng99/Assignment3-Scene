@@ -8,6 +8,7 @@ import App.Main;
 import scene.Material;
 import scene.TextureControl;
 import scene.TreeNode;
+import utils.Normal;
 import utils.Utils;
 import utils.Vector;
 
@@ -53,52 +54,55 @@ public class Road extends TreeNode {
 		TextureControl.setupTexture(gl, "Road");
 		
 		gl.glBegin(GL2.GL_QUADS);
-    	gl.glNormal3d(0, 1, 0);
     	
     	double textureLength = laneWidth * 1.5;
-    	double loopTimes = (distance1 / textureLength) * 4;
+    	double loopTimes = (distance1 / textureLength) * 10;
     	Vector loopLength = new Vector((end.x - start.x) / loopTimes, 0, (end.z - start.z) / loopTimes);
-    	Vector tmp;
     	
     	for (int i = 0; i < loopTimes - 1; i++)
     	{
-        	gl.glTexCoord2d(i / 4.0, 1);
-        	tmp = new Vector(start.x + xOffset + i * loopLength.x, 0, start.z + zOffset + i * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp);
-        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+    		ArrayList<Vector> points = new ArrayList<>();
+    		points.add(new Vector(start.x + xOffset + i * loopLength.x, 0, start.z + zOffset + i * loopLength.z));
+    		points.add(new Vector(start.x - xOffset + i * loopLength.x, 0, start.z - zOffset + i * loopLength.z));
+    		points.add(new Vector(start.x - xOffset + (i + 1) * loopLength.x, 0, start.z - zOffset + (i + 1) * loopLength.z));
+    		points.add(new Vector(start.x + xOffset + (i + 1) * loopLength.x, 0, start.z + zOffset + (i + 1) * loopLength.z));
+        	points.get(0).y = Main.terrain.getHeightAt(points.get(0));
+        	points.get(1).y = Main.terrain.getHeightAt(points.get(1));
+        	points.get(2).y = Main.terrain.getHeightAt(points.get(2));
+        	points.get(3).y = Main.terrain.getHeightAt(points.get(3));
+        	
+        	Vector normal = Normal.CalcPolygon(points);
+        	gl.glNormal3dv(normal.ToArray(), 0);
+    		
+        	gl.glTexCoord2d(i / 10.0, 1);
+        	gl.glVertex3dv(points.get(0).ToArray(), 0);
         	
         	if (i % 20 == 0)
         	{
-        		setupLight(tmp, Math.toDegrees(rad));
+        		setupLight(points.get(0), Math.toDegrees(rad));
         	}
         	else if (i % 10 == 0)
         	{
-        		setupTree(tmp);
+        		setupTree(points.get(0));
         	}
         	
-        	gl.glTexCoord2d(i / 4.0, 0);
-        	tmp = new Vector(start.x - xOffset + i * loopLength.x, 0, start.z - zOffset + i * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp);
-        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	gl.glTexCoord2d(i / 10.0, 0);
+        	gl.glVertex3dv(points.get(1).ToArray(), 0);
         	
         	if (i % 20 == 10)
         	{
-        		setupLight(tmp, Math.toDegrees(rad) + 180);
+        		setupLight(points.get(1), Math.toDegrees(rad) + 180);
         	}
         	else if (i % 10 == 0)
         	{
-        		setupTree(tmp);
+        		setupTree(points.get(1));
         	}
         	
-        	gl.glTexCoord2d((i + 1) / 4.0, 0);
-        	tmp = new Vector(start.x - xOffset + (i + 1) * loopLength.x, 0, start.z - zOffset + (i + 1) * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp);
-        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	gl.glTexCoord2d((i + 1) / 10.0, 0);
+        	gl.glVertex3dv(points.get(2).ToArray(), 0);
         	
-        	gl.glTexCoord2d((i + 1) / 4.0, 1);
-        	tmp = new Vector(start.x + xOffset + (i + 1) * loopLength.x, 0, start.z + zOffset + (i + 1) * loopLength.z);
-        	tmp.y = Main.terrain.getHeightAt(tmp);
-        	gl.glVertex3d(tmp.x, tmp.y, tmp.z);
+        	gl.glTexCoord2d((i + 1) / 10.0, 1);
+        	gl.glVertex3dv(points.get(3).ToArray(), 0);
     	}
 		
 		gl.glEnd();
@@ -148,7 +152,7 @@ public class Road extends TreeNode {
 	    	double xOffset = laneWidth * 0.33 * Math.cos(rad);
 	    	double zOffset = laneWidth * 0.33 * Math.sin(rad);
 	    	
-	    	int distanceShift = Utils.genRand(10, -10);
+	    	int distanceShift = Utils.genRand(5, -5);
 	    	double xOffsetF = (i * start.distanceTo(end) / 20.0 + distanceShift) * Math.sin(rad);
 	    	double zOffsetF = (i * start.distanceTo(end) / 20.0 + distanceShift) * Math.cos(rad);
 			

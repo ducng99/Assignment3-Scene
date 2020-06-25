@@ -16,8 +16,6 @@ import utils.Vector;
  *
  */
 public class FlatBase {
-	private boolean isFilled = true;
-	
 	private double width = 50;
 	private double height = 50;
 	
@@ -37,12 +35,7 @@ public class FlatBase {
 		
 		gl.glNewList(displayListID, GL2.GL_COMPILE);
 		
-		gl.glTranslated(0, 0.01, 0);	// Avoid having the same height with terrain, causes flickering
-		
-		if (!isFilled)
-		{
-			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		}
+		gl.glTranslated(0, 0.01, 0);	// Avoid having the same height with some part of the terrain, causes flickering
 		
 		Material.water(gl);
 		TextureControl.setupTexture(gl, "Water");
@@ -94,16 +87,6 @@ public class FlatBase {
 		gl.glPushMatrix();
 		gl.glCallList(displayListID);
 		gl.glPopMatrix();
-	}
-	
-	/**
-	 * Toggle between filled or wire-frame draw mode
-	 */
-	public void toggleDrawMode()
-	{
-		isFilled = !isFilled;
-		gl.glDeleteLists(displayListID, 1);
-		init();
 	}
 
 	public double getWidth() {

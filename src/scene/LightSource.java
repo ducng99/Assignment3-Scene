@@ -1,8 +1,8 @@
 package scene;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 import com.jogamp.opengl.GL2;
 
@@ -29,16 +29,14 @@ public class LightSource {
     
     private LightType type;
     private boolean useGlobalAmbient = false;
-    private double distance;
+    private double distance = 0;
     
-    public static ArrayList<LightSource> lights = new ArrayList<>();
-    static class LightDistanceComparator implements Comparator<LightSource> {
+    public static LinkedList<LightSource> lights = new LinkedList<>();
+    private static LightDistanceComparator comp = new LightDistanceComparator();
+    private static class LightDistanceComparator implements Comparator<LightSource> {
 		@Override
 		public int compare(LightSource o1, LightSource o2) {			
-			if (o1.type == LightType.Directional)
-				return -1;
-			else
-				return (int)Math.round(o1.distance - o2.distance);
+			return (int)(o1.distance - o2.distance);
 		}
     }
     
@@ -67,14 +65,17 @@ public class LightSource {
 	
 	public static void drawLight()
 	{
-		ArrayList<LightSource> tmp = new ArrayList<>();
+		LinkedList<LightSource> tmp = new LinkedList<>();
 		tmp.addAll(lights);
 		
+		Vector heliPos = Main.helicopter.getPosition();
+		
 		tmp.parallelStream().forEach((light) -> {
-			light.distance = light.Position.distanceTo(Main.helicopter.getPosition());
+			if (light.type != LightType.Directional)
+				light.distance = light.Position.distanceTo(heliPos);
 		});
 		
-		Collections.sort(tmp, new LightDistanceComparator());
+		Collections.sort(tmp, comp);
 		for (int i = 0; i < 8 && i < tmp.size(); i++)
 		{
 			LightSource source = tmp.get(i);

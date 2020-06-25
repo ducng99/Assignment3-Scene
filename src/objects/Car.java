@@ -10,6 +10,7 @@ import utils.Vector;
 public class Car extends TreeNode{
 	private Vector Position;
 	private double rad;
+	private double pitch;
 	
 	private Vector start;
 	private double distance;
@@ -25,9 +26,9 @@ public class Car extends TreeNode{
 	public Car(GL2 gl, Vector start, double distance, double rad) {
 		this.rad = rad;
 		this.start = start;
-		this.distance = distance;
 		
 		body = new Body(gl);
+		this.distance = distance - (body.side + body.frontGlass + body.hood + body.side + body.backGlass + body.trunk);
 		
 		frontLeftWheel = new Wheel(gl);
 		frontLeftWheel.setPosition(new Vector(body.side, 0, body.side + body.frontGlass + body.hood * 0.6));
@@ -56,17 +57,35 @@ public class Car extends TreeNode{
 		// Update every frame
 		if (System.currentTimeMillis() - prevTick > 1000 / 60.0)
 		{
+	    	double frontHeight;
+	    	double backHeight;
+	    	
+			// Move forward
 			if (start.distanceTo(Position) >= distance)
 			{
 				Position = new Vector(start);
 			}
+	    	
+	    	if (rad / Math.PI > 1)
+	    	{
+	    		frontHeight = Main.terrain.getHeightAt(Position.Offset(0, 0, body.side + body.frontGlass + body.hood));
+	    		backHeight = Main.terrain.getHeightAt(Position.Offset(0, 0, -body.side - body.backGlass - body.trunk));
+	    	}
+	    	else
+	    	{
+	    		frontHeight = Main.terrain.getHeightAt(Position.Offset(0, 0, -body.side - body.frontGlass - body.hood));
+	    		backHeight = Main.terrain.getHeightAt(Position.Offset(0, 0, body.side + body.backGlass + body.trunk));
+	    	}
 			
 	    	double xOffset = 0.15 * Math.sin(rad);
 	    	double zOffset = 0.15 * Math.cos(rad);
 	    	
 	    	Vector target = Position.Offset(xOffset, 0, zOffset);
-	    	target.y = Main.terrain.getHeightAt(Position);
+	    	target.y = backHeight;
 	    	Position = target;
+	    	
+	    	// Update pitch
+	    	pitch = Math.toDegrees(Math.asin((frontHeight - backHeight) / (body.side + body.frontGlass + body.hood + body.side + body.backGlass + body.trunk)));
 	    	
 	    	prevTick = System.currentTimeMillis();
 		}
@@ -83,9 +102,10 @@ public class Car extends TreeNode{
 	@Override
 	public void drawNode(GL2 gl) {
 		gl.glPushMatrix();
-		move();
 		
-		gl.glRotated(-Math.toDegrees(rad), 0, 1, 0);
+		gl.glRotated(Math.toDegrees(rad), 0, 1, 0);
+		gl.glRotated(pitch, 1, 0, 0);
+		move();
 		
 		body.draw(gl);
 		
