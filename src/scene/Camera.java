@@ -15,6 +15,7 @@ public class Camera {
 
 	private static final double FOV = 68;
 	private double viewDistance = 300;	// Actual view distance is halved
+	public int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
 	
 	private Vector Position = new Vector();
 	private Vector lookAtPos = new Vector();

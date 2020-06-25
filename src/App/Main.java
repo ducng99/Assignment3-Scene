@@ -28,7 +28,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import objects.*;
 
 /**
- * Main class for the helicopter application
+ * Main class for the application
  * 
  * @author Duc Nguyen
  *
@@ -41,7 +41,7 @@ public class Main implements GLEventListener, KeyListener {
 	
 	private final static double WIDTH = 100;
 	private final static double HEIGHT = 156;
-	private boolean isFilled;
+	private boolean isFilled = true;
 	
 	private static Animator animator;
 	private static final GLUT glut = new GLUT();
@@ -55,7 +55,6 @@ public class Main implements GLEventListener, KeyListener {
 	private Origin origin;
 	public static Helicopter helicopter;
 	private Road road;
-	private int cameraMode = 0;	// TPP = 0, Free look = 1, FPP = 2
 	
 	private JLabel loadingLabel = new JLabel("Loading...");
 	private static JFrame frame;
@@ -110,8 +109,8 @@ public class Main implements GLEventListener, KeyListener {
 				+ "LEFT/RIGHT ARROWS: Turn left or right\n"
 				+ "W/S: Move forward or backward\n"
 				+ "A/D: Strafe left or right\n"
-				+ "L: Change flatBase draw mode\n"
-				+ "K: Toggle camera mode (0 = Third person, 1 = Free look, 2 = First person)\n");
+				+ "B: Change draw mode\n"
+				+ "V: Toggle camera mode (0 = Third person, 1 = Free look, 2 = First person)\n");
 	}
 
 	@Override
@@ -176,7 +175,7 @@ public class Main implements GLEventListener, KeyListener {
 
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         
-		switch (cameraMode)
+		switch (camera.cameraMode)
 		{
 			case 0:
 	        	camera.setEyePos(getCameraPos(25, 10));
@@ -288,9 +287,6 @@ public class Main implements GLEventListener, KeyListener {
 			
 			switch(event.getKeyCode())
 			{
-				case KeyEvent.VK_L:
-					isFilled = !isFilled;
-					break;
 				case KeyEvent.VK_W:
 					helicopter.isForward = true;
 					break;
@@ -315,8 +311,11 @@ public class Main implements GLEventListener, KeyListener {
 				case KeyEvent.VK_RIGHT:
 					helicopter.isLookRight = true;
 					break;
-				case KeyEvent.VK_K:
-					cameraMode = ++cameraMode % 3;
+				case KeyEvent.VK_B:
+					isFilled = !isFilled;
+					break;
+				case KeyEvent.VK_V:
+					camera.cameraMode = ++camera.cameraMode % 3;
 					break;
 				default:
 					break;

@@ -16,16 +16,16 @@ import utils.Vector;
  *
  */
 public class FlatBase {
-	private double width = 50;
-	private double height = 50;
+	private double width;
+	private double height;
 	
 	private GL2 gl;
 	private int displayListID;
 
 	public FlatBase(GL2 gl, double width, double height) {
 		this.gl = gl;
-		this.setHeight(height);
-		this.setWidth(width);
+		this.width = width;
+		this.height = height;
 		init();
 	}
 	
@@ -45,9 +45,9 @@ public class FlatBase {
 		Vector normal;
 		ArrayList<Vector> points = new ArrayList<>();
 		
-		for (double iHeight = -height; iHeight < height - 1; iHeight++)
+		for (double iHeight = -height; iHeight < height - 2; iHeight++)
 		{
-			for (double iWidth = -width; iWidth < width - 1; iWidth++)
+			for (double iWidth = -width; iWidth < width - 2; iWidth++)
 			{
 				points.add(new Vector(iWidth, 0, iHeight));
 				points.add(new Vector(iWidth, 0, iHeight + 1));
@@ -87,23 +87,5 @@ public class FlatBase {
 		gl.glPushMatrix();
 		gl.glCallList(displayListID);
 		gl.glPopMatrix();
-	}
-
-	public double getWidth() {
-		return width;
-	}
-
-	public void setWidth(double width) {
-		this.width = width;
-	}
-
-	public double getHeight() {
-		return height;
-	}
-
-	public void setHeight(double height) {
-		this.height = height;
-	}
-	
-	
+	}	
 }

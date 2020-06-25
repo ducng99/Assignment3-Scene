@@ -10,6 +10,11 @@ import scene.Material;
 import scene.TreeNode;
 import utils.Vector;
 
+/**
+ * This class draws a street light and create a new light source
+ * @author Duc Nguyen
+ *
+ */
 public class StreetLight extends TreeNode {
 	private int displayListID;
 	
@@ -67,7 +72,7 @@ public class StreetLight extends TreeNode {
 		gl.glRotated(-direction + 90, 0, 1, 0);
 		
 		// Bulb cover
-		double rad = Math.toRadians(direction);
+		double rad = Math.toRadians(-direction);
     	double xOffset = -1.2 * Math.cos(rad);
 		double zOffset = -1.2 * Math.sin(rad);
 		gl.glTranslated(xOffset, 0, zOffset);
